@@ -11,10 +11,30 @@ const handleRequest = frames(async (ctx) => {
     if (!messageHash) {
       return {
         image: (
-          <span>
-            To use make it a quote, drop the link in the reply to a cast. Then
-            click &quot;make it a quote&quot;
-          </span>
+          <>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+                backgroundColor: "black",
+                color: "white",
+                padding: "64px",
+                borderRadius: "32px",
+                alignItems: "center",
+              }}
+            >
+              <p>to use make it a quote</p>
+              <p>drop the link in the reply to a cast</p>
+              <p>then click &quot;make it a quote&quot;</p>
+              <p>
+                by{" "}
+                <span style={{ marginLeft: "8px", color: "#D6B8FF" }}>
+                  @flick
+                </span>
+              </p>
+            </div>
+          </>
         ),
         buttons: [
           <Button action="post">make it a quote</Button>,
