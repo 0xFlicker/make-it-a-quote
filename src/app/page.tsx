@@ -1,10 +1,8 @@
+import { baseUrl } from "@/config";
 import { fetchMetadata } from "frames.js/next";
 import { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
   return {
     title: "Make it a quote",
     openGraph: {
@@ -17,9 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
         },
       ],
     },
-    other: await fetchMetadata(
-      new URL("/frames", "https://make-it-a-quote.vercel.app"),
-    ),
+    other: await fetchMetadata(new URL("/frames", baseUrl)),
   };
 }
 

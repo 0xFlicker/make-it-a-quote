@@ -2,6 +2,7 @@
 import { Button } from "frames.js/next";
 import { frames } from "./frames";
 import { fetchCast } from "@/neynar/cast";
+import { baseUrl } from "@/config";
 
 const handleRequest = frames(async (ctx) => {
   try {
@@ -15,14 +16,7 @@ const handleRequest = frames(async (ctx) => {
           </span>
         ),
         buttons: [
-          <Button
-            action="link"
-            target={`${
-              process.env.VERCEL_URL
-                ? `https://{process.env.VERCEL_URL}`
-                : "http://localhost:3000"
-            }`}
-          >
+          <Button action="link" target={baseUrl}>
             get link
           </Button>,
           <Button action="link" target="https://warpcast.com/flick">
@@ -36,11 +30,7 @@ const handleRequest = frames(async (ctx) => {
       type: "hash",
     });
     const parentHash = cast?.parent_hash;
-    const ogImage = `${
-      process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000"
-    }/quote/${parentHash}`;
+    const ogImage = `${baseUrl}/quote/${parentHash}`;
     return {
       image: ogImage,
       buttons: [
@@ -57,14 +47,7 @@ const handleRequest = frames(async (ctx) => {
     return {
       image: <span>error</span>,
       buttons: [
-        <Button
-          action="link"
-          target={`${
-            process.env.VERCEL_URL
-              ? `https://{process.env.VERCEL_URL}`
-              : "http://localhost:3000"
-          }`}
-        >
+        <Button action="link" target={baseUrl}>
           get link
         </Button>,
         <Button action="link" target="https://warpcast.com/flick">
