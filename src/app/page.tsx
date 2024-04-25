@@ -20,5 +20,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function Page() {
-  return <span>make it a quote</span>;
+  return (
+    <>
+      <p>to use make it a quote frame:</p>
+      <p>drop the url in the reply to a cast</p>
+      <p>then click &quot;make it a quote&quot;</p>
+    </>
+  );
 }
