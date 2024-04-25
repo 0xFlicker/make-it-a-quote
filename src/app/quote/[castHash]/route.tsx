@@ -95,7 +95,7 @@ export async function GET(
                 style={{
                   fontSize,
                   width: "100%",
-                  textAlign: "center",
+                  textAlign: "left",
                   paddingRight: "32px",
                 }}
               >
