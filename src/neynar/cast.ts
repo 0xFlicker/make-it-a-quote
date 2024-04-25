@@ -1,5 +1,5 @@
 import { neynarApiKey } from "@/config";
-import { CastResult, HttpResult } from "./types";
+import { CastResult } from "./types";
 
 export async function fetchCast({
   identifier,

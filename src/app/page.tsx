@@ -1,5 +1,6 @@
 import { fetchMetadata } from "frames.js/next";
 import { Metadata } from "next";
+
 export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = process.env.VERCEL_URL
     ? `https://${process.env.VERCEL_URL}`
