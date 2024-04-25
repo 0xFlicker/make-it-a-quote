@@ -15,8 +15,7 @@ export async function GET(
 
   const imagePfp = cast.author?.pfp_url;
   const text = cast.text;
-
-  console.log("imagePfp", imagePfp);
+  const name = cast.author?.username;
 
   const canvas = Canvas.createCanvas(576, 576);
 
@@ -103,9 +102,15 @@ export async function GET(
                 {paragraph}
               </p>
             ))}
+            <p
+              style={{
+                fontSize: "24px",
+                // light purple
+                color: "#D6B8FF",
+              }}
+            >{`@${name}`}</p>
           </div>
         </div>
-        {/* to lower - right, add an attribution */}
         <p
           style={{
             position: "absolute",

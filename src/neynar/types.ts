@@ -47,6 +47,8 @@ export interface Cast {
   };
   author: {
     pfp_url: string;
+    username: string;
+    fid: number;
   };
   text: string;
   timestamp: string;
