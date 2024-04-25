@@ -17,7 +17,9 @@ export async function generateMetadata(): Promise<Metadata> {
         },
       ],
     },
-    other: await fetchMetadata(new URL("/frames", baseUrl)),
+    other: await fetchMetadata(
+      new URL("/frames", "https://make-it-a-quote.vercel.app"),
+    ),
   };
 }
 
