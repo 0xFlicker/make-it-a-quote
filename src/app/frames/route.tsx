@@ -12,7 +12,8 @@ const handleRequest = frames(async (ctx) => {
       return {
         image: (
           <span>
-            To use make it a quote, drop the link in the reply to a cast
+            To use make it a quote, drop the link in the reply to a cast. Then
+            click &quot;make it a quote&quot;
           </span>
         ),
         buttons: [
