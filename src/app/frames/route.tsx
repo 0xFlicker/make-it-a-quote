@@ -37,7 +37,7 @@ const handleRequest = frames(async (ctx) => {
   const parentHash = cast?.parent_hash;
   const ogImage = `${
     process.env.VERCEL_URL
-      ? `https://{process.env.VERCEL_URL}`
+      ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000"
   }/quote/${parentHash}`;
   return {
