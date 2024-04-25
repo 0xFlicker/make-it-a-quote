@@ -16,6 +16,7 @@ const handleRequest = frames(async (ctx) => {
           </span>
         ),
         buttons: [
+          <Button action="post">make it a quote</Button>,
           <Button action="link" target={baseUrl}>
             get link
           </Button>,
