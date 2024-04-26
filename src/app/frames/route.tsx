@@ -52,6 +52,7 @@ const handleRequest = frames(async (ctx) => {
 
     let identifier: string;
     let type: "hash" | "url" = "url";
+    let loadParent = false;
     if (inputText && inputText.length > 0) {
       // if starts with 0x, it's a hash
       if (inputText.startsWith("0x")) {
@@ -69,6 +70,7 @@ const handleRequest = frames(async (ctx) => {
     } else {
       identifier = messageHash!;
       type = "hash";
+      loadParent = true;
     }
 
     if (!identifier) {
@@ -117,7 +119,7 @@ const handleRequest = frames(async (ctx) => {
       type,
     });
 
-    const ogImage = `${baseUrl}/quote/${cast?.parent_hash ?? cast?.hash ?? messageHash}`;
+    const ogImage = `${baseUrl}/quote/${loadParent ? cast?.parent_hash ?? cast?.hash ?? messageHash : cast?.hash ?? messageHash}`;
     return {
       image: ogImage,
       buttons: [
