@@ -52,7 +52,7 @@ const handleRequest = frames(async (ctx) => {
 
     let identifier: string;
     let type: "hash" | "url" = "url";
-    if (inputText) {
+    if (inputText && inputText.length > 0) {
       // if starts with 0x, it's a hash
       if (inputText.startsWith("0x")) {
         identifier = inputText;
@@ -110,6 +110,9 @@ const handleRequest = frames(async (ctx) => {
         ],
       };
     }
+
+    console.log({ identifier, type, messageHash, inputText });
+
     const { cast } = await fetchCast({
       identifier,
       type,
