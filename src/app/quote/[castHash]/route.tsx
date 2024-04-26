@@ -51,7 +51,6 @@ export async function GET(
   fontSize -= Math.floor(paragraphs.length / 2);
   fontSize = Math.max(fontSize, 10);
 
-  console.log("paragraphs", paragraphs);
   return new ImageResponse(
     (
       <div

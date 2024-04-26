@@ -7,8 +7,9 @@ import { baseUrl } from "@/config";
 const handleRequest = frames(async (ctx) => {
   try {
     const messageHash = ctx.message?.castId?.hash;
+    const inputText = ctx.message?.inputText;
 
-    if (!messageHash) {
+    if (!messageHash && !inputText) {
       return {
         image: (
           <>
@@ -36,6 +37,68 @@ const handleRequest = frames(async (ctx) => {
             </div>
           </>
         ),
+        textInput: "Cast url or hash",
+        buttons: [
+          <Button action="post">make it a quote</Button>,
+          <Button action="link" target={baseUrl}>
+            get link
+          </Button>,
+          <Button action="link" target="https://warpcast.com/flick">
+            created by flick
+          </Button>,
+        ],
+      };
+    }
+
+    let identifier: string;
+    let type: "hash" | "url" = "url";
+    if (inputText) {
+      // if starts with 0x, it's a hash
+      if (inputText.startsWith("0x")) {
+        identifier = inputText;
+        type = "hash";
+      } else {
+        const url = new URL(inputText);
+        if (url.hostname !== "warpcast.com") {
+          identifier = url.pathname.split("/").pop()!;
+          type = "hash";
+        } else {
+          identifier = inputText;
+        }
+      }
+    } else {
+      identifier = messageHash!;
+    }
+
+    if (!identifier) {
+      return {
+        image: (
+          <>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+                backgroundColor: "black",
+                color: "white",
+                padding: "64px",
+                borderRadius: "32px",
+                alignItems: "center",
+              }}
+            >
+              <p>to use make it a quote frame:</p>
+              <p>drop https://quote.flick.ing in the reply to a cast</p>
+              <p>then click &quot;make it a quote&quot;</p>
+              <p>
+                by{" "}
+                <span style={{ marginLeft: "8px", color: "#D6B8FF" }}>
+                  @flick
+                </span>
+              </p>
+            </div>
+          </>
+        ),
+        textInput: "Cast url or hash",
         buttons: [
           <Button action="post">make it a quote</Button>,
           <Button action="link" target={baseUrl}>
@@ -48,11 +111,11 @@ const handleRequest = frames(async (ctx) => {
       };
     }
     const { cast } = await fetchCast({
-      identifier: messageHash,
-      type: "hash",
+      identifier,
+      type,
     });
-    const parentHash = cast?.parent_hash;
-    const ogImage = `${baseUrl}/quote/${parentHash}`;
+
+    const ogImage = `${baseUrl}/quote/${cast?.parent_hash ?? cast?.hash ?? messageHash}`;
     return {
       image: ogImage,
       buttons: [
