@@ -112,17 +112,9 @@ const handleRequest = frames(async (ctx) => {
       };
     }
 
-    console.log({ identifier, type, messageHash, inputText });
-
     const { cast } = await fetchCast({
       identifier,
       type,
-    });
-
-    console.log({
-      hash: cast?.hash,
-      parent_hash: cast?.parent_hash,
-      messageHash,
     });
 
     const ogImage = `${baseUrl}/quote/${cast?.parent_hash ?? cast?.hash ?? messageHash}`;
