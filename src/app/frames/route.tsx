@@ -115,6 +115,12 @@ const handleRequest = frames(async (ctx) => {
       type,
     });
 
+    console.log({
+      hash: cast?.hash,
+      parent_hash: cast?.parent_hash,
+      messageHash,
+    });
+
     const ogImage = `${baseUrl}/quote/${cast?.parent_hash ?? cast?.hash ?? messageHash}`;
     return {
       image: ogImage,
