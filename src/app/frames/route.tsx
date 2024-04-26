@@ -68,6 +68,7 @@ const handleRequest = frames(async (ctx) => {
       }
     } else {
       identifier = messageHash!;
+      type = "hash";
     }
 
     if (!identifier) {
