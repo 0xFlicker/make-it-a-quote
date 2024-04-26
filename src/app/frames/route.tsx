@@ -26,7 +26,7 @@ const handleRequest = frames(async (ctx) => {
               }}
             >
               <p>to use make it a quote frame:</p>
-              <p>drop https://quote.flick.ing in the reply to a cast</p>
+              <p>drop quote.flick.ing in the reply to a cast</p>
               <p>then click &quot;make it a quote&quot;</p>
               <p>
                 by{" "}
