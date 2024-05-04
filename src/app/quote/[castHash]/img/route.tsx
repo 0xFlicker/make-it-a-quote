@@ -21,7 +21,13 @@ export async function GET(
 
   const ctx = canvas.getContext("2d");
   const image = await Canvas.loadImage(imagePfp);
-  ctx.drawImage(image, 0, 0, 576, 576); // Draw the image with 1:1 aspect ratio
+
+  const sx = image.width > image.height ? (image.width - image.height) / 2 : 0;
+  const sy = image.height > image.width ? (image.height - image.width) / 2 : 0;
+  const sWidth = Math.min(image.width, image.height);
+  const sHeight = Math.min(image.width, image.height);
+
+  ctx.drawImage(image, sx, sy, sWidth, sHeight, 0, 0, 576, 576); // Draw the image with 1:1 aspect ratio
 
   // Create gradient
   const grd = ctx.createLinearGradient(0, 576 / 2, 576, 576 / 2);

@@ -119,11 +119,15 @@ const handleRequest = frames(async (ctx) => {
       type,
     });
 
-    const ogImage = `${baseUrl}/quote/${loadParent ? cast?.parent_hash ?? cast?.hash ?? messageHash : cast?.hash ?? messageHash}`;
+    const resolvedHash = loadParent
+      ? cast?.parent_hash ?? cast?.hash ?? messageHash
+      : cast?.hash ?? messageHash;
+
+    const ogImage = `${baseUrl}/quote/${resolvedHash}/img`;
     return {
       image: ogImage,
       buttons: [
-        <Button action="link" target={ogImage}>
+        <Button action="link" target={`${baseUrl}/quote/${resolvedHash}`}>
           share
         </Button>,
         <Button action="link" target="https://warpcast.com/flick">

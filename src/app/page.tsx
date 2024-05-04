@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
       images: [
         {
           url: new URL(
-            "/quote/0xa9c00b85171e2b9db7ccaf627fc12375e33eae6c",
+            "/quote/0xa9c00b85171e2b9db7ccaf627fc12375e33eae6c/img",
             baseUrl,
           ).toString(),
         },
