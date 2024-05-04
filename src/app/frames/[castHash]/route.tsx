@@ -20,7 +20,7 @@ const handleRequest = (castHash: `0x${string}`) =>
           action="link"
           target={`https://warpcast.com/~/add-cast-action?url=${`${baseUrl}/action`}`}
         >
-          add action
+          action
         </Button>,
       ],
     };

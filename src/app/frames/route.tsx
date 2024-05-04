@@ -39,9 +39,9 @@ const handleRequest = frames(async (ctx) => {
         ),
         textInput: "Cast url or hash",
         buttons: [
-          <Button action="post">make it a quote</Button>,
+          <Button action="post">quote</Button>,
           <Button action="link" target={baseUrl}>
-            get link
+            share
           </Button>,
           <Button action="link" target="https://warpcast.com/flick">
             created by flick
@@ -50,7 +50,7 @@ const handleRequest = frames(async (ctx) => {
             action="link"
             target={`https://warpcast.com/~/add-cast-action?url=${`${baseUrl}/action`}`}
           >
-            add action
+            action
           </Button>,
         ],
       };
@@ -109,9 +109,9 @@ const handleRequest = frames(async (ctx) => {
         ),
         textInput: "Cast url or hash",
         buttons: [
-          <Button action="post">make it a quote</Button>,
+          <Button action="post">quote</Button>,
           <Button action="link" target={baseUrl}>
-            get link
+            share
           </Button>,
           <Button action="link" target="https://warpcast.com/flick">
             created by flick
@@ -120,7 +120,7 @@ const handleRequest = frames(async (ctx) => {
             action="link"
             target={`https://warpcast.com/~/add-cast-action?url=${`${baseUrl}/action`}`}
           >
-            add action
+            action
           </Button>,
         ],
       };
@@ -149,7 +149,7 @@ const handleRequest = frames(async (ctx) => {
           action="link"
           target={`https://warpcast.com/~/add-cast-action?url=${`${baseUrl}/action`}`}
         >
-          add action
+          action
         </Button>,
       ],
     };
@@ -159,7 +159,7 @@ const handleRequest = frames(async (ctx) => {
       image: <span>error</span>,
       buttons: [
         <Button action="link" target={baseUrl}>
-          get link
+          share
         </Button>,
         <Button action="link" target="https://warpcast.com/flick">
           created by flick
@@ -168,7 +168,7 @@ const handleRequest = frames(async (ctx) => {
           action="link"
           target={`https://warpcast.com/~/add-cast-action?url=${`${baseUrl}/action`}`}
         >
-          add action
+          action
         </Button>,
       ],
     };
