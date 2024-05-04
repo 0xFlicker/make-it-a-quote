@@ -46,6 +46,12 @@ const handleRequest = frames(async (ctx) => {
           <Button action="link" target="https://warpcast.com/flick">
             created by flick
           </Button>,
+          <Button
+            action="link"
+            target={`https://warpcast.com/~/add-cast-action?url=${`${baseUrl}/action`}`}
+          >
+            add action
+          </Button>,
         ],
       };
     }
@@ -110,6 +116,12 @@ const handleRequest = frames(async (ctx) => {
           <Button action="link" target="https://warpcast.com/flick">
             created by flick
           </Button>,
+          <Button
+            action="link"
+            target={`https://warpcast.com/~/add-cast-action?url=${`${baseUrl}/action`}`}
+          >
+            add action
+          </Button>,
         ],
       };
     }
@@ -133,6 +145,12 @@ const handleRequest = frames(async (ctx) => {
         <Button action="link" target="https://warpcast.com/flick">
           created by flick
         </Button>,
+        <Button
+          action="link"
+          target={`https://warpcast.com/~/add-cast-action?url=${`${baseUrl}/action`}`}
+        >
+          add action
+        </Button>,
       ],
     };
   } catch (error) {
@@ -145,6 +163,12 @@ const handleRequest = frames(async (ctx) => {
         </Button>,
         <Button action="link" target="https://warpcast.com/flick">
           created by flick
+        </Button>,
+        <Button
+          action="link"
+          target={`https://warpcast.com/~/add-cast-action?url=${`${baseUrl}/action`}`}
+        >
+          add action
         </Button>,
       ],
     };

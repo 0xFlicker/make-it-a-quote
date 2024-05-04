@@ -10,7 +10,7 @@ export const GET = async (req: NextRequest) => {
     },
     icon: "device-camera",
     name: "Make it a quote",
-    aboutUrl: `${baseUrl}/action`,
+    aboutUrl: `${baseUrl}`,
     description: "Generate a quote image for a cast.",
   };
 

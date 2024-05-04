@@ -16,6 +16,12 @@ const handleRequest = (castHash: `0x${string}`) =>
         <Button action="link" target="https://warpcast.com/flick">
           created by flick
         </Button>,
+        <Button
+          action="link"
+          target={`https://warpcast.com/~/add-cast-action?url=${`${baseUrl}/action`}`}
+        >
+          add action
+        </Button>,
       ],
     };
   });
