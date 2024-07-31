@@ -1503,10 +1503,10 @@ foreground-child@^3.1.0:
     cross-spawn "^7.0.0"
     signal-exit "^4.0.1"
 
-frames.js@^0.15.1:
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/frames.js/-/frames.js-0.15.1.tgz#d6e33788e34490efc95e5faaee3c3d1f69a2677b"
-  integrity sha512-5DyeJbDjCqUEhCSv7E/eXni1oED2VAW7mKJZcrq416M1RNOSL4dWMzF9uG/sYf3OVhwNBhCmlSrJwA1rHOHFKQ==
+frames.js@^0.18.1:
+  version "0.18.1"
+  resolved "https://registry.yarnpkg.com/frames.js/-/frames.js-0.18.1.tgz#35db68fa482242c9d2724940b4301da029e3abfd"
+  integrity sha512-4IFisYMLnu7Adogp6jZSgQF6OtJSA6nmIHUS2Vb4eMqusM3EwqrRQSneW5gU2S6D4UP9UTHWVFqUNOnRtkKusg==
   dependencies:
     "@vercel/og" "^0.6.2"
     cheerio "^1.0.0-rc.12"
