@@ -2491,4 +2491,4 @@ export type SocialCapitalQueryVariables = Exact<{
 }>;
 
 
-export type SocialCapitalQuery = { Socials: { Social: Array<{ farcasterScore: { farRank: number | null } | null }> | null } | null, FarcasterCasts: { Cast: Array<{ castValue: { rawValue: string | null, formattedValue: number | null } | null }> | null } | null };
+export type SocialCapitalQuery = { Socials: { Social: Array<{ farcasterScore: { farRank: number | null } | null }> | null } | null, FarcasterCasts: { Cast: Array<{ moxieEarningsSplit: Array<{ earnerType: EarnerType, earningsAmount: number | null, earningsAmountInWei: string | null } | null> | null }> | null } | null, FarcasterReplies: { Reply: Array<{ moxieEarningsSplit: Array<{ earnerType: EarnerType, earningsAmount: number | null, earningsAmountInWei: string | null } | null> | null }> | null } | null };

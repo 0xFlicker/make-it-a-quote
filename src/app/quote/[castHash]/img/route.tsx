@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import "@/graphql/airstack";
+import { formatEther } from "viem";
 import { NextRequest, NextResponse } from "next/server";
 import { ImageResponse } from "@vercel/og";
 import { fetchCast } from "@/neynar/cast";
@@ -46,9 +47,21 @@ const socialCapitalQuery = /* GraphQL */ `
       input: { filter: { hash: { _eq: $castHash } }, blockchain: ALL }
     ) {
       Cast {
-        castValue {
-          rawValue
-          formattedValue
+        moxieEarningsSplit {
+          earnerType
+          earningsAmount
+          earningsAmountInWei
+        }
+      }
+    }
+    FarcasterReplies(
+      input: { filter: { hash: { _eq: $castHash } }, blockchain: ALL }
+    ) {
+      Reply {
+        moxieEarningsSplit {
+          earnerType
+          earningsAmount
+          earningsAmountInWei
         }
       }
     }
@@ -74,7 +87,7 @@ export async function GET(
     socialCapitalQuery,
     {
       identity: `fc_fid:${cast.author?.fid}`,
-      castHash: cast.hash,
+      castHash: params.castHash,
     } as SocialCapitalQueryVariables,
   );
 
@@ -95,23 +108,35 @@ export async function GET(
     if (Number(data.Socials?.Social?.length) > 0 && !Number.isNaN(farRank)) {
       rank = farRank;
     }
-    if (Number(data.FarcasterCasts?.Cast?.length) > 1) {
+    if (
+      Number(data.FarcasterCasts?.Cast?.length) > 1 ||
+      Number(data.FarcasterReplies?.Reply?.length) > 1
+    ) {
       console.warn(
         `More than one social capital found for ${cast.parent_url}`,
         data.FarcasterCasts,
+        data.FarcasterReplies,
       );
     }
-    const castScore = Number(
-      data.FarcasterCasts?.Cast?.[0]?.castValue?.formattedValue,
-    );
-    if (
-      Number(data.FarcasterCasts?.Cast?.length) > 0 &&
-      !Number.isNaN(castScore)
-    ) {
-      moxieAmount = castScore;
+    const replyOrCast =
+      data.FarcasterReplies?.Reply?.[0] ?? data.FarcasterCasts?.Cast?.[0];
+
+    if (replyOrCast?.moxieEarningsSplit) {
+      const castScore = replyOrCast?.moxieEarningsSplit?.reduce(
+        (acc, result) => {
+          if (result) {
+            const { earningsAmountInWei } = result;
+            if (earningsAmountInWei) {
+              return acc + BigInt(earningsAmountInWei);
+            }
+          }
+          return acc;
+        },
+        0n,
+      );
+      moxieAmount = Number(formatEther(castScore));
     }
   }
-
   if (error) {
     console.error(error);
   }
@@ -180,7 +205,7 @@ export async function GET(
 
   let signOff = `@${name}`;
   let moxieAmountString = "";
-  if (moxieAmount != null) {
+  if (moxieAmount != null && moxieAmount > 0) {
     // if moxieAmount is > 1, then trim the decimal places, other wise show 2 decimal places
     moxieAmountString =
       moxieAmount > 1 ? moxieAmount.toFixed(0) : moxieAmount.toFixed(2);
