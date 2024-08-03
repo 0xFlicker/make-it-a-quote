@@ -228,7 +228,6 @@ export async function GET(
           style={{
             display: "flex",
             width: "50%",
-            height: "100%",
             backgroundColor: "black",
             justifyContent: "center",
             backgroundSize: "100% 100%",
@@ -239,49 +238,59 @@ export async function GET(
             style={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              color: "white",
-              overflow: "hidden",
-
-              // a little line spacing
-              lineHeight: "1.5em",
+              alignItems: "flex-start",
+              height: "100%",
             }}
           >
             {moxieAmountString && (
               <p
                 style={{
                   alignSelf: "flex-end",
-
+                  justifySelf: "flex-start",
+                  textAlign: "right",
                   fontSize: "24px",
                   // light purple
                   color: "#D6B8FF",
-                  marginRight: "64px",
                 }}
               >{`${moxieAmountString} Ⓜ️`}</p>
             )}
-            {paragraphs.map((paragraph, index) => (
-              <p
-                key={index}
-                style={{
-                  fontSize,
-                  width: "100%",
-                  textAlign: "left",
-                  paddingRight: "32px",
-                }}
-              >
-                {paragraph}
-              </p>
-            ))}
-            <p
+            <div
               style={{
-                fontSize: "24px",
-                // light purple
-                color: "#D6B8FF",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "white",
+                height: "100%",
+                overflow: "hidden",
+
+                // a little line spacing
+                lineHeight: "1.5em",
               }}
             >
-              {signOff}
-            </p>
+              {paragraphs.map((paragraph, index) => (
+                <p
+                  key={index}
+                  style={{
+                    fontSize,
+                    width: "100%",
+                    textAlign: "left",
+                    paddingRight: "32px",
+                  }}
+                >
+                  {paragraph}
+                </p>
+              ))}
+              <p
+                style={{
+                  fontSize: "24px",
+                  // light purple
+                  color: "#D6B8FF",
+                }}
+              >
+                {signOff}
+              </p>
+            </div>
           </div>
         </div>
         <p
