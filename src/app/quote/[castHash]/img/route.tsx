@@ -8,12 +8,26 @@ import {
   SocialCapitalQuery,
   SocialCapitalQueryVariables,
 } from "@/graphql/types";
+import path from "path";
+import { tmpdir } from "os";
+import { promises as fs } from "fs";
 import Canvas, { deregisterAllFonts, registerFont } from "canvas";
 import { baseUrl } from "@/config";
 
 deregisterAllFonts();
-registerFont("./public/fonts/Roboto-Medium.ttf", { family: "Roboto" });
-
+// load font from baseUrl/fonts/Roboto-Medium.ttf
+const promiseFonts = fetch(`${baseUrl}/fonts/Roboto-Medium.ttf`).then(
+  async (response) => {
+    const data = await response.arrayBuffer();
+    await fs.writeFile(
+      path.join(tmpdir(), "Roboto-Medium.ttf"),
+      Buffer.from(data),
+    );
+    registerFont(path.join(tmpdir(), "Roboto-Medium.ttf"), {
+      family: "Roboto",
+    });
+  },
+);
 const socialCapitalQuery = /* GraphQL */ `
   query SocialCapital($identity: Identity!, $castHash: String!) {
     Socials(
@@ -50,6 +64,7 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { castHash: string } },
 ) {
+  await promiseFonts;
   const { cast } = await fetchCast({
     identifier: params.castHash,
     type: "hash",

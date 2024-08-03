@@ -2,7 +2,7 @@
 const nextConfig = {
   experimental: {
     outputFileTracingIncludes: {
-      "./src/app/frames/[castHash]/route": ["./public/fonts/**/*"],
+      "/src/app/frames/[castHash]/route.tsx": ["./public/fonts/**/*"],
     },
   },
 };
