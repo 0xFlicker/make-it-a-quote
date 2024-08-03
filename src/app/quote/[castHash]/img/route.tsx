@@ -173,7 +173,11 @@ export async function GET(
     576 + rankTextDimensions.actualBoundingBoxAscent / 2 - 96 / 2 - 16,
   );
 
-  // ctx.fillText(rankText, 22, 576 - 56, 60);
+  // Write "FarRank" above the badge, centered
+  ctx.fillStyle = "black";
+  ctx.font = "24px Roboto";
+  ctx.textAlign = "center";
+  ctx.fillText("FarRank", 16 + 96 / 2, 576 - 96 - 16 - 8);
 
   // Create gradient
   const grd = ctx.createLinearGradient(0, 576 / 2, 576, 576 / 2);
