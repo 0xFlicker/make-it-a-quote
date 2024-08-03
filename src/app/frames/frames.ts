@@ -1,5 +1,6 @@
 import { createFrames } from "frames.js/next";
 import { farcasterHubContext } from "frames.js/middleware";
+import { airstackApiKey } from "@/config";
 
 export const frames = createFrames({
   basePath: "/frames",
@@ -10,7 +11,7 @@ export const frames = createFrames({
             hubHttpUrl: "https://hubs.airstack.xyz",
             hubRequestOptions: {
               headers: {
-                "x-airstack-hubs": process.env.AIRSTACK_API_KEY as string,
+                "x-airstack-hubs": airstackApiKey,
               },
             },
           }

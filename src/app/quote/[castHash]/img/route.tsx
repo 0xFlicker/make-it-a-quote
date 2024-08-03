@@ -1,8 +1,47 @@
 /* eslint-disable @next/next/no-img-element */
+import "@/graphql/airstack";
 import { NextRequest, NextResponse } from "next/server";
 import { ImageResponse } from "@vercel/og";
 import { fetchCast } from "@/neynar/cast";
+import { fetchQuery } from "@airstack/node";
+import {
+  SocialCapitalQuery,
+  SocialCapitalQueryVariables,
+} from "@/graphql/types";
 import Canvas from "canvas";
+import { baseUrl } from "@/config";
+
+const socialCapitalQuery = /* GraphQL */ `
+  query SocialCapital($identity: Identity!, $castHash: String!) {
+    Socials(
+      input: {
+        filter: { dappName: { _eq: farcaster }, identity: { _eq: $identity } }
+        blockchain: ethereum
+      }
+    ) {
+      Social {
+        farcasterScore {
+          farRank
+        }
+      }
+    }
+    FarcasterCasts(
+      input: { filter: { hash: { _eq: $castHash } }, blockchain: ALL }
+    ) {
+      Cast {
+        castValue {
+          rawValue
+          formattedValue
+        }
+      }
+    }
+  }
+`;
+
+interface SocialCapitalQueryResponse {
+  data: SocialCapitalQuery | null;
+  error: Error | null;
+}
 
 export async function GET(
   req: NextRequest,
@@ -13,21 +52,85 @@ export async function GET(
     type: "hash",
   });
 
+  const { data, error }: SocialCapitalQueryResponse = await fetchQuery(
+    socialCapitalQuery,
+    {
+      identity: `fc_fid:${cast.author?.fid}`,
+      castHash: cast.hash,
+    } as SocialCapitalQueryVariables,
+  );
+
   const imagePfp = cast.author?.pfp_url;
   const text = cast.text;
   const name = cast.author?.username;
 
+  let rank: number | null = null;
+  let moxieAmount: number | null = null;
+  if (!error && data) {
+    if (Number(data.Socials?.Social?.length) > 1) {
+      console.warn(
+        `More than one social capital found for ${cast.parent_url}`,
+        data.Socials,
+      );
+    }
+    const farRank = Number(data.Socials?.Social?.[0]?.farcasterScore?.farRank);
+    if (Number(data.Socials?.Social?.length) > 0 && !Number.isNaN(farRank)) {
+      rank = farRank;
+    }
+    if (Number(data.FarcasterCasts?.Cast?.length) > 1) {
+      console.warn(
+        `More than one social capital found for ${cast.parent_url}`,
+        data.FarcasterCasts,
+      );
+    }
+    const castScore = Number(
+      data.FarcasterCasts?.Cast?.[0]?.castValue?.formattedValue,
+    );
+    if (
+      Number(data.FarcasterCasts?.Cast?.length) > 0 &&
+      !Number.isNaN(castScore)
+    ) {
+      moxieAmount = castScore;
+    }
+  }
+
+  if (error) {
+    console.error(error);
+  }
   const canvas = Canvas.createCanvas(576, 576);
 
   const ctx = canvas.getContext("2d");
-  const image = await Canvas.loadImage(imagePfp);
+  const pfpImage = await Canvas.loadImage(imagePfp);
 
-  const sx = image.width > image.height ? (image.width - image.height) / 2 : 0;
-  const sy = image.height > image.width ? (image.height - image.width) / 2 : 0;
-  const sWidth = Math.min(image.width, image.height);
-  const sHeight = Math.min(image.width, image.height);
+  const sx =
+    pfpImage.width > pfpImage.height
+      ? (pfpImage.width - pfpImage.height) / 2
+      : 0;
+  const sy =
+    pfpImage.height > pfpImage.width
+      ? (pfpImage.height - pfpImage.width) / 2
+      : 0;
+  const sWidth = Math.min(pfpImage.width, pfpImage.height);
+  const sHeight = Math.min(pfpImage.width, pfpImage.height);
 
-  ctx.drawImage(image, sx, sy, sWidth, sHeight, 0, 0, 576, 576); // Draw the image with 1:1 aspect ratio
+  ctx.drawImage(pfpImage, sx, sy, sWidth, sHeight, 0, 0, 576, 576); // Draw the image with 1:1 aspect ratio
+
+  // Now draw a badge in lower left with SCS score
+  const badgeImage = await Canvas.loadImage(`${baseUrl}/badge.png`);
+  ctx.drawImage(badgeImage, 16, 576 - 96 - 16, 96, 96);
+  // use black text to draw the rank inside the badge
+  const rankText = `#${rank}`;
+  ctx.fillStyle = "black";
+  ctx.font = `${rankText.length < 3 ? 28 : 28 - Math.min((rankText.length - 3) * 4, 20)}px Roboto`;
+
+  const rankTextDimensions = ctx.measureText(rankText);
+  ctx.fillText(
+    rankText,
+    16 + 96 / 2 - rankTextDimensions.width / 2,
+    576 + rankTextDimensions.actualBoundingBoxAscent / 2 - 96 / 2 - 16,
+  );
+
+  // ctx.fillText(rankText, 22, 576 - 56, 60);
 
   // Create gradient
   const grd = ctx.createLinearGradient(0, 576 / 2, 576, 576 / 2);
@@ -57,6 +160,14 @@ export async function GET(
   fontSize -= Math.floor(paragraphs.length / 2);
   fontSize = Math.max(fontSize, 10);
 
+  let signOff = `@${name}`;
+  let moxieAmountString = "";
+  if (moxieAmount != null) {
+    // if moxieAmount is > 1, then trim the decimal places, other wise show 2 decimal places
+    moxieAmountString =
+      moxieAmount > 1 ? moxieAmount.toFixed(0) : moxieAmount.toFixed(2);
+    // signOff = `@${name} | ${moxieAmountString} Ⓜ️`;
+  }
   return new ImageResponse(
     (
       <div
@@ -94,6 +205,18 @@ export async function GET(
               lineHeight: "1.5em",
             }}
           >
+            {moxieAmountString && (
+              <p
+                style={{
+                  alignSelf: "flex-end",
+
+                  fontSize: "24px",
+                  // light purple
+                  color: "#D6B8FF",
+                  marginRight: "64px",
+                }}
+              >{`${moxieAmountString} Ⓜ️`}</p>
+            )}
             {paragraphs.map((paragraph, index) => (
               <p
                 key={index}
@@ -113,7 +236,9 @@ export async function GET(
                 // light purple
                 color: "#D6B8FF",
               }}
-            >{`@${name}`}</p>
+            >
+              {signOff}
+            </p>
           </div>
         </div>
         <p

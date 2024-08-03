@@ -2,10 +2,11 @@
 import { Button } from "frames.js/next";
 import { frames } from "../../frames/frames";
 import { baseUrl } from "@/config";
+
 import { NextRequest } from "next/server";
 
-const handleRequest = (castHash: `0x${string}`) =>
-  frames(async () => {
+const handleRequest = (castHash: `0x${string}`) => {
+  return frames(() => {
     const ogImage = `${baseUrl}/quote/${castHash}/img`;
     return {
       image: ogImage,
@@ -25,6 +26,7 @@ const handleRequest = (castHash: `0x${string}`) =>
       ],
     };
   });
+};
 
 export const GET = (
   req: NextRequest,
