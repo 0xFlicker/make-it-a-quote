@@ -1,4 +1,10 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  experimental: {
+    outputFileTracingIncludes: {
+      "./src/app/frames/[castHash]/route": ["./public/fonts/**/*"],
+    },
+  },
+};
 
 export default nextConfig;

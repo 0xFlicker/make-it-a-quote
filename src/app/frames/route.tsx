@@ -43,7 +43,7 @@ const handleRequest = frames(async (ctx) => {
           <Button action="link" target={baseUrl}>
             share
           </Button>,
-          <Button action="link" target="https://warpcast.com/flick">
+          <Button action="link" target="https://warpcast.com/flick/0x1f50f7b1">
             created by flick
           </Button>,
           <Button
@@ -113,7 +113,7 @@ const handleRequest = frames(async (ctx) => {
           <Button action="link" target={baseUrl}>
             share
           </Button>,
-          <Button action="link" target="https://warpcast.com/flick">
+          <Button action="link" target="https://warpcast.com/flick/0x1f50f7b1">
             created by flick
           </Button>,
           <Button
@@ -142,7 +142,7 @@ const handleRequest = frames(async (ctx) => {
         <Button action="link" target={`${baseUrl}/quote/${resolvedHash}`}>
           share
         </Button>,
-        <Button action="link" target="https://warpcast.com/flick">
+        <Button action="link" target="https://warpcast.com/flick/0x1f50f7b1">
           created by flick
         </Button>,
         <Button
@@ -161,7 +161,7 @@ const handleRequest = frames(async (ctx) => {
         <Button action="link" target={baseUrl}>
           share
         </Button>,
-        <Button action="link" target="https://warpcast.com/flick">
+        <Button action="link" target="https://warpcast.com/flick/0x1f50f7b1">
           created by flick
         </Button>,
         <Button

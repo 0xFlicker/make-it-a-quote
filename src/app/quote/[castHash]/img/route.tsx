@@ -8,8 +8,11 @@ import {
   SocialCapitalQuery,
   SocialCapitalQueryVariables,
 } from "@/graphql/types";
-import Canvas from "canvas";
+import Canvas, { deregisterAllFonts, registerFont } from "canvas";
 import { baseUrl } from "@/config";
+
+deregisterAllFonts();
+registerFont("./public/fonts/Roboto-Medium.ttf", { family: "Roboto" });
 
 const socialCapitalQuery = /* GraphQL */ `
   query SocialCapital($identity: Identity!, $castHash: String!) {

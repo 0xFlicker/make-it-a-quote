@@ -14,7 +14,10 @@ const handleRequest = (castHash: `0x${string}`) => {
         <Button action="link" target={`${baseUrl}/quote/${castHash}`}>
           share
         </Button>,
-        <Button action="link" target="https://warpcast.com/flick">
+        <Button action="post" target={`${baseUrl}/quote/${castHash}`}>
+          refresh
+        </Button>,
+        <Button action="link" target="https://warpcast.com/flick/0x1f50f7b1">
           created by flick
         </Button>,
         <Button
