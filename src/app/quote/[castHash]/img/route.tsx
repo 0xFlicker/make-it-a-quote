@@ -243,6 +243,7 @@ export async function GET(
               display: "flex",
               flexDirection: "column",
               alignItems: "flex-start",
+              width: "100%",
               height: "100%",
             }}
           >
@@ -253,6 +254,7 @@ export async function GET(
                   justifySelf: "flex-start",
                   textAlign: "right",
                   fontSize: "24px",
+                  marginRight: "42px",
                   // light purple
                   color: "#D6B8FF",
                 }}
