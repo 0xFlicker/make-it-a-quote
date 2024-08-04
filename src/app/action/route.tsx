@@ -21,6 +21,6 @@ export const POST = frames(async (ctx) => {
   const castId = ctx.message?.castId?.hash;
   return NextResponse.json({
     type: "frame",
-    frameUrl: castId ? `${baseUrl}/quote/${castId}` : `${baseUrl}`,
+    frameUrl: castId ? `${baseUrl}/frames/${castId}` : `${baseUrl}`,
   });
 });

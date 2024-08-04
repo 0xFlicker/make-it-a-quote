@@ -12,6 +12,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@airstack/frames": "^1.1.12",
     "@airstack/node": "^0.0.7",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",

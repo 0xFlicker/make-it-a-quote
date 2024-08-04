@@ -1,4 +1,6 @@
-import { init } from "@airstack/node";
+import { init as initNode } from "@airstack/node";
+import { init as initFrame } from "@airstack/frames";
 import { airstackApiKey } from "@/config";
 
-init(airstackApiKey);
+initNode(airstackApiKey);
+initFrame(airstackApiKey);
