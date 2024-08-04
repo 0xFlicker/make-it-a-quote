@@ -3,11 +3,6 @@
 import { Button } from "frames.js/next";
 import { airstackMiddleware, frames } from "../../frames/frames";
 import { baseUrl } from "@/config";
-import {
-  validateFramesMessage,
-  ValidateFramesMessageInput,
-  ValidateFramesMessageOutput,
-} from "@airstack/frames";
 
 import { NextRequest } from "next/server";
 
@@ -48,17 +43,9 @@ export const GET = (
 ) => {
   return handleRequest(castHash)(req);
 };
-export const POST = async (
+export const POST = (
   req: NextRequest,
   { params: { castHash } }: { params: { castHash: `0x${string}` } },
 ) => {
-  // try {
-  //   const body: ValidateFramesMessageInput = await req.clone().json();
-  //   const res: ValidateFramesMessageOutput = await validateFramesMessage(body);
-  //   console.log("Message is valid", res.isValid);
-  // } catch (error) {
-  //   console.error("Unable to verify message", error);
-  // }
-
   return handleRequest(castHash)(req);
 };

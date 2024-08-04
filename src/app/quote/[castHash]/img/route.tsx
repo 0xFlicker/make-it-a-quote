@@ -15,20 +15,22 @@ import { promises as fs } from "fs";
 import Canvas, { deregisterAllFonts, registerFont } from "canvas";
 import { baseUrl } from "@/config";
 
-deregisterAllFonts();
 // load font from baseUrl/fonts/Roboto-Medium.ttf
-const promiseFonts = fetch(`${baseUrl}/fonts/Roboto-Medium.ttf`).then(
-  async (response) => {
+const promiseFonts = fetch(`${baseUrl}/fonts/Roboto-Medium.ttf`)
+  .then(async (response) => {
     const data = await response.arrayBuffer();
     await fs.writeFile(
       path.join(tmpdir(), "Roboto-Medium.ttf"),
       Buffer.from(data),
     );
+    deregisterAllFonts();
     registerFont(path.join(tmpdir(), "Roboto-Medium.ttf"), {
       family: "Roboto",
     });
-  },
-);
+  })
+  .catch((error) => {
+    console.error("Failed to load font", error);
+  });
 const socialCapitalQuery = /* GraphQL */ `
   query SocialCapital($identity: Identity!, $castHash: String!) {
     Socials(
