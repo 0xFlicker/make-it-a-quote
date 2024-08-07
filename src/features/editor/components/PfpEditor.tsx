@@ -14,6 +14,7 @@ import {
 } from "react";
 import CropIcon from "@mui/icons-material/Crop";
 import TextIcon from "@mui/icons-material/TextFields";
+import EditNote from "@mui/icons-material/EditNote";
 import FormatColor from "@mui/icons-material/FormatColorText";
 import FormatSize from "@mui/icons-material/FormatSize";
 import ResetIcon from "@mui/icons-material/Replay";
@@ -31,12 +32,15 @@ import { useExport } from "../hooks/useExport";
 
 import "../fabric/register";
 import { stickers } from "../stickers";
+import { FontStyles, FontStylesPopover } from "./FontStylesPopover";
 
 interface State {
   isEmpty: boolean;
   file: File | null;
   fabricCanvas: CanvasWithSafeArea | null;
   activeTool: "stickers" | "crop" | "text" | null;
+  textStyles?: FontStyles;
+  activePopover?: "text" | "sticker" | null;
 }
 
 interface ClearAction {
@@ -71,10 +75,18 @@ interface CloseStickerSelectAction {
 
 interface EnterTextAction {
   type: "enterText";
+  textStyles?: FontStyles;
 }
 
 interface ExitTextAction {
   type: "exitText";
+}
+
+interface EnterTextFormatAction {
+  type: "enterTextFormat";
+}
+interface ExitTextFormatAction {
+  type: "exitTextFormat";
 }
 
 type Action =
@@ -86,7 +98,9 @@ type Action =
   | OpenStickerSelectAction
   | CloseStickerSelectAction
   | EnterTextAction
-  | ExitTextAction;
+  | ExitTextAction
+  | EnterTextFormatAction
+  | ExitTextFormatAction;
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -139,12 +153,26 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         activeTool: "text",
+        textStyles: action.textStyles,
       };
     }
     case "exitText": {
       return {
         ...state,
         activeTool: null,
+        textStyles: undefined,
+      };
+    }
+    case "enterTextFormat": {
+      return {
+        ...state,
+        activePopover: "text",
+      };
+    }
+    case "exitTextFormat": {
+      return {
+        ...state,
+        activePopover: null,
       };
     }
     default: {
@@ -157,6 +185,11 @@ export const PfpEditor: FC = () => {
   const [stickerAnchorEl, setStickerAnchorEl] = useState<HTMLElement | null>(
     null,
   );
+  const [bottomNavigation2ndAnchorEl, setBottomNavigation2ndAnchorEl] =
+    useState<HTMLElement | null>(null);
+
+  const [bottomNavigation3rdAnchorEl, setBottomNavigation3rdAnchorEl] =
+    useState<HTMLElement | null>(null);
 
   const [doExitCrop, setExitCrop] = useState(() => () => {});
   const [state, dispatch] = useReducer(reducer, {
@@ -245,15 +278,27 @@ export const PfpEditor: FC = () => {
         fontSize: 100,
       });
 
-      text.onDeselect = () => {
+      text.on("selected", () => {
+        dispatch({
+          type: "enterText",
+          textStyles: {
+            isBold: text.fontWeight === "bold",
+            isItalic: text.fontStyle === "italic",
+            isUnderlined: text.underline,
+          },
+        });
+        return false;
+      });
+
+      text.on("deselected", () => {
         if (text.text === "") {
           fabricCanvas.remove(text);
         }
         dispatch({
           type: "exitText",
         });
-        return true;
-      };
+        return false;
+      });
 
       fabricCanvas.add(text);
       fabricCanvas.renderAll();
@@ -300,7 +345,7 @@ export const PfpEditor: FC = () => {
                         doCrop();
                         break;
                       }
-                      case 2: {
+                      case 3: {
                         download();
                         break;
                       }
@@ -324,6 +369,52 @@ export const PfpEditor: FC = () => {
                 </BottomNavigation>
               );
             }
+            case "crop": {
+              <BottomNavigation
+                showLabels
+                value={state.activeTool}
+                onChange={(_, newValue: number) => {
+                  switch (newValue) {
+                    case 0: {
+                      dispatch({
+                        type: "openStickerSelect",
+                      });
+                      break;
+                    }
+                    case 1: {
+                      addText();
+                      dispatch({
+                        type: "enterText",
+                      });
+                      break;
+                    }
+                    case 2: {
+                      doCrop();
+                      break;
+                    }
+                    case 2: {
+                      download();
+                      break;
+                    }
+                    default: {
+                      break;
+                    }
+                  }
+                }}
+              >
+                <BottomNavigationAction
+                  ref={setStickerAnchorEl}
+                  label="Stickers"
+                  icon={<DocumentIcon />}
+                />
+                <BottomNavigationAction label="Text" icon={<TextIcon />} />
+                <BottomNavigationAction label="Crop" icon={<CropIcon />} />
+                <BottomNavigationAction
+                  label="Download"
+                  icon={<DownloadIcon />}
+                />
+              </BottomNavigation>;
+            }
             case "text": {
               return (
                 <BottomNavigation
@@ -345,11 +436,9 @@ export const PfpEditor: FC = () => {
                         break;
                       }
                       case 2: {
-                        doCrop();
-                        break;
-                      }
-                      case 2: {
-                        download();
+                        dispatch({
+                          type: "enterTextFormat",
+                        });
                         break;
                       }
                       default: {
@@ -363,11 +452,15 @@ export const PfpEditor: FC = () => {
                     label="Color"
                     icon={<FormatColor />}
                   />
-                  <BottomNavigationAction label="Size" icon={<FormatSize />} />
-                  <BottomNavigationAction label="Crop" icon={<CropIcon />} />
                   <BottomNavigationAction
-                    label="Download"
-                    icon={<DownloadIcon />}
+                    ref={setBottomNavigation2ndAnchorEl}
+                    label="Size"
+                    icon={<FormatSize />}
+                  />
+                  <BottomNavigationAction
+                    ref={setBottomNavigation3rdAnchorEl}
+                    label="Format"
+                    icon={<EditNote />}
                   />
                 </BottomNavigation>
               );
@@ -408,6 +501,30 @@ export const PfpEditor: FC = () => {
             };
           }
         }}
+      />
+      <FontStylesPopover
+        anchorEl={bottomNavigation3rdAnchorEl}
+        open={state.activePopover === "text"}
+        onClose={() => {
+          dispatch({
+            type: "exitTextFormat",
+          });
+        }}
+        onFontStylesChange={(fontStyles) => {
+          if (state.fabricCanvas) {
+            const { fabricCanvas } = state;
+            const activeObject = fabricCanvas.getActiveObject();
+            if (activeObject instanceof IText) {
+              activeObject.set({
+                fontWeight: fontStyles.isBold ? "bold" : "normal",
+                fontStyle: fontStyles.isItalic ? "italic" : "normal",
+                underline: fontStyles.isUnderlined,
+              });
+              fabricCanvas.renderAll();
+            }
+          }
+        }}
+        initialFontStyles={state.textStyles}
       />
     </>
   );
