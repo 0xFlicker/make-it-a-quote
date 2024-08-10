@@ -5,6 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import CardActionArea from "@mui/material/CardActionArea";
 import Typography from "@mui/material/Typography";
 import UploadIcon from "@mui/icons-material/Upload";
+import Dialog from "@mui/material/Dialog";
 import { useDropzone } from "react-dropzone";
 
 type Props = {
@@ -22,19 +23,42 @@ export const FileUploadPanel: FC<Props> = ({ onFileUpload }) => {
 
   return (
     <Card {...getRootProps()}>
-      <CardActionArea sx={{ height: 200 }}>
+      <CardActionArea sx={{ height: 400 }}>
         <CardHeader
-          title="Upload a file"
-          subheader="Drag and drop a file here"
+          title="Import"
           avatar={<UploadIcon />}
+          sx={{ textAlign: "center" }}
         />
         <CardContent>
-          <Typography variant="body2" color="text.secondary">
-            Or click here to select a file
-          </Typography>
           <input {...getInputProps()} />
         </CardContent>
       </CardActionArea>
     </Card>
+  );
+};
+
+export const FileUploadDialog: FC<
+  Props & {
+    open: boolean;
+    onClose: () => void;
+  }
+> = ({ onFileUpload, open, onClose }) => {
+  const handleFileUpload = (file: File) => {
+    onFileUpload?.(file);
+    onClose();
+  };
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      PaperProps={{
+        sx: {
+          p: 4,
+          width: "400px",
+        },
+      }}
+    >
+      <FileUploadPanel onFileUpload={handleFileUpload} />
+    </Dialog>
   );
 };

@@ -1,8 +1,10 @@
 "use client";
 import Grid2 from "@mui/material/Unstable_Grid2";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
-import { FileUploadPanel } from "./FileUploadPanel";
+import { FileUploadDialog, FileUploadPanel } from "./FileUploadPanel";
 import { IText } from "fabric";
 import {
   FC,
@@ -29,18 +31,21 @@ import DocumentIcon from "@mui/icons-material/Description";
 import { StickerPopover } from "./StickerPopover";
 import { Image as FabricImage } from "fabric";
 import { useExport } from "../hooks/useExport";
+import { EmptyBar } from "./EmptyBar";
+import { FormatBar } from "./Formats/FormatBar";
 
 import "../fabric/register";
 import { stickers } from "../stickers";
-import { FontStyles, FontStylesPopover } from "./FontStylesPopover";
+import { FormatStyles, FormatPopover } from "./Formats/FormatPopover";
 
 interface State {
   isEmpty: boolean;
   file: File | null;
   fabricCanvas: CanvasWithSafeArea | null;
   activeTool: "stickers" | "crop" | "text" | null;
-  textStyles?: FontStyles;
+  textStyles?: FormatStyles;
   activePopover?: "text" | "sticker" | null;
+  openDialog?: "import" | null;
 }
 
 interface ClearAction {
@@ -75,7 +80,7 @@ interface CloseStickerSelectAction {
 
 interface EnterTextAction {
   type: "enterText";
-  textStyles?: FontStyles;
+  textStyles?: FormatStyles;
 }
 
 interface ExitTextAction {
@@ -89,6 +94,13 @@ interface ExitTextFormatAction {
   type: "exitTextFormat";
 }
 
+interface OpenImportDialogAction {
+  type: "openImportDialog";
+}
+interface CloseImportDialogAction {
+  type: "closeImportDialog";
+}
+
 type Action =
   | ClearAction
   | FileOpenedAction
@@ -100,7 +112,9 @@ type Action =
   | EnterTextAction
   | ExitTextAction
   | EnterTextFormatAction
-  | ExitTextFormatAction;
+  | ExitTextFormatAction
+  | OpenImportDialogAction
+  | CloseImportDialogAction;
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -175,6 +189,18 @@ function reducer(state: State, action: Action): State {
         activePopover: null,
       };
     }
+    case "openImportDialog": {
+      return {
+        ...state,
+        openDialog: "import",
+      };
+    }
+    case "closeImportDialog": {
+      return {
+        ...state,
+        openDialog: null,
+      };
+    }
     default: {
       return state;
     }
@@ -197,6 +223,7 @@ export const PfpEditor: FC = () => {
     file: null,
     fabricCanvas: null,
     activeTool: null,
+    openDialog: null,
   });
 
   const fileUrl = useMemo(() => {
@@ -304,17 +331,33 @@ export const PfpEditor: FC = () => {
       fabricCanvas.renderAll();
     }
   }, [state]);
+  const toolbarHeight = 64;
+  const bottomNavigationHeight = 50;
 
   return (
     <>
-      <Grid2 container spacing={2}>
-        <Grid2 xs={12}>
-          <FileUploadPanel onFileUpload={onFileReady} />
-        </Grid2>
-        <Grid2 xs={12}>
+      {state.activeTool === "text" ? (
+        <FormatBar />
+      ) : (
+        <EmptyBar
+          onImport={() => {
+            dispatch({
+              type: "openImportDialog",
+            });
+          }}
+        />
+      )}
+      <Container
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          height: `calc(100vh - ${toolbarHeight}px - ${bottomNavigationHeight}px)`,
+        }}
+      >
+        <Box sx={{ flexGrow: 1, overflow: "auto" }}>
           <PfpCanvas onCanvasReady={onCanvasReady} />
-        </Grid2>
-      </Grid2>
+        </Box>
+      </Container>
       <Paper
         sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
         elevation={3}
@@ -436,9 +479,11 @@ export const PfpEditor: FC = () => {
                         break;
                       }
                       case 2: {
-                        dispatch({
-                          type: "enterTextFormat",
-                        });
+                        doCrop();
+                        break;
+                      }
+                      case 3: {
+                        download();
                         break;
                       }
                       default: {
@@ -449,18 +494,14 @@ export const PfpEditor: FC = () => {
                 >
                   <BottomNavigationAction
                     ref={setStickerAnchorEl}
-                    label="Color"
-                    icon={<FormatColor />}
+                    label="Stickers"
+                    icon={<DocumentIcon />}
                   />
+                  <BottomNavigationAction label="Text" icon={<TextIcon />} />
+                  <BottomNavigationAction label="Crop" icon={<CropIcon />} />
                   <BottomNavigationAction
-                    ref={setBottomNavigation2ndAnchorEl}
-                    label="Size"
-                    icon={<FormatSize />}
-                  />
-                  <BottomNavigationAction
-                    ref={setBottomNavigation3rdAnchorEl}
-                    label="Format"
-                    icon={<EditNote />}
+                    label="Download"
+                    icon={<DownloadIcon />}
                   />
                 </BottomNavigation>
               );
@@ -502,7 +543,7 @@ export const PfpEditor: FC = () => {
           }
         }}
       />
-      <FontStylesPopover
+      <FormatPopover
         anchorEl={bottomNavigation3rdAnchorEl}
         open={state.activePopover === "text"}
         onClose={() => {
@@ -510,7 +551,7 @@ export const PfpEditor: FC = () => {
             type: "exitTextFormat",
           });
         }}
-        onFontStylesChange={(fontStyles) => {
+        onFormatChange={(fontStyles) => {
           if (state.fabricCanvas) {
             const { fabricCanvas } = state;
             const activeObject = fabricCanvas.getActiveObject();
@@ -524,7 +565,21 @@ export const PfpEditor: FC = () => {
             }
           }
         }}
-        initialFontStyles={state.textStyles}
+        initialFormat={state.textStyles}
+      />
+      <FileUploadDialog
+        open={state.openDialog === "import"}
+        onClose={() =>
+          dispatch({
+            type: "closeImportDialog",
+          })
+        }
+        onFileUpload={(file) => {
+          dispatch({
+            type: "fileOpened",
+            payload: file,
+          });
+        }}
       />
     </>
   );

@@ -9,7 +9,7 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import { styled } from "@mui/material";
 
-export type FontStyles = {
+export type FormatStyles = {
   isBold: boolean;
   isItalic: boolean;
   isUnderlined: boolean;
@@ -34,32 +34,30 @@ const ParentContainer = styled(Container)({
   overflow: "visible", // Allow overflow
 });
 
-export const FontStylesPopover: FC<{
+export const FormatPopover: FC<{
   anchorEl: HTMLElement | null;
   open: boolean;
   onClose: () => void;
-  onFontStylesChange: (fontStyles: FontStyles) => void;
-  initialFontStyles?: FontStyles;
-}> = ({ anchorEl, open, onClose, onFontStylesChange, initialFontStyles }) => {
-  const [isBold, setIsBold] = useState(initialFontStyles?.isBold ?? false);
-  const [isItalic, setIsItalic] = useState(
-    initialFontStyles?.isItalic ?? false,
-  );
+  onFormatChange: (fontStyles: FormatStyles) => void;
+  initialFormat?: FormatStyles;
+}> = ({ anchorEl, open, onClose, onFormatChange, initialFormat }) => {
+  const [isBold, setIsBold] = useState(initialFormat?.isBold ?? false);
+  const [isItalic, setIsItalic] = useState(initialFormat?.isItalic ?? false);
   const [isUnderlined, setIsUnderlined] = useState(
-    initialFontStyles?.isUnderlined ?? false,
+    initialFormat?.isUnderlined ?? false,
   );
   const onBoldClick = useCallback(() => {
     setIsBold((prev) => !prev);
-    onFontStylesChange({ isBold: !isBold, isItalic, isUnderlined });
-  }, [isBold, isItalic, isUnderlined, onFontStylesChange]);
+    onFormatChange({ isBold: !isBold, isItalic, isUnderlined });
+  }, [isBold, isItalic, isUnderlined, onFormatChange]);
   const onItalicClick = useCallback(() => {
     setIsItalic((prev) => !prev);
-    onFontStylesChange({ isBold, isItalic: !isItalic, isUnderlined });
-  }, [isBold, isItalic, isUnderlined, onFontStylesChange]);
+    onFormatChange({ isBold, isItalic: !isItalic, isUnderlined });
+  }, [isBold, isItalic, isUnderlined, onFormatChange]);
   const onUnderlinedClick = useCallback(() => {
     setIsUnderlined((prev) => !prev);
-    onFontStylesChange({ isBold, isItalic, isUnderlined: !isUnderlined });
-  }, [isBold, isItalic, isUnderlined, onFontStylesChange]);
+    onFormatChange({ isBold, isItalic, isUnderlined: !isUnderlined });
+  }, [isBold, isItalic, isUnderlined, onFormatChange]);
   return (
     <Popover
       open={open}

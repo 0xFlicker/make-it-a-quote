@@ -1,7 +1,7 @@
 import { createTheme } from "@mui/material/styles";
 
 // neon green
-const outlineColor = "#0f0";
+const outlineColor = "#dddddd";
 const softBorderRadius = "12px";
 
 const theme = createTheme({
