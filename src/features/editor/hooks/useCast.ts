@@ -92,16 +92,19 @@ export function useCast({
           console.error(json.error);
         } else {
           console.log(json.message);
-          window.parent.postMessage({
-            type: "createCast",
-            data: {
-              cast: {
-                ...(castId && { parent: castId }),
-                text: "flicking",
-                embeds: [json.fileName],
+          window.parent.postMessage(
+            {
+              type: "createCast",
+              data: {
+                cast: {
+                  ...(castId && { parent: castId }),
+                  text: "flicking",
+                  embeds: [json.fileName],
+                },
               },
             },
-          });
+            "*",
+          );
         }
       } catch (error) {
         console.error(error);
