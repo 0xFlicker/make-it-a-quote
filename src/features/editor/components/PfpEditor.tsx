@@ -373,7 +373,7 @@ export const Content: FC = () => {
       });
       state.fabricCanvas?.renderAll();
     },
-    [addImage],
+    [addImage, state.fabricCanvas],
   );
 
   // useEffect(() => {
