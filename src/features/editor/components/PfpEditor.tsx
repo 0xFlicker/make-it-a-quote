@@ -16,6 +16,7 @@ import {
 } from "react";
 import CropIcon from "@mui/icons-material/Crop";
 import TextIcon from "@mui/icons-material/TextFields";
+import SendIcon from "@mui/icons-material/Send";
 import EditNote from "@mui/icons-material/EditNote";
 import FormatColor from "@mui/icons-material/FormatColorText";
 import FormatSize from "@mui/icons-material/FormatSize";
@@ -553,10 +554,7 @@ export const Content: FC<Props> = ({ castId, embeds, parentPfp }) => {
                   />
                   <BottomNavigationAction label="Text" icon={<TextIcon />} />
                   <BottomNavigationAction label="Crop" icon={<CropIcon />} />
-                  <BottomNavigationAction
-                    label="Download"
-                    icon={<DownloadIcon />}
-                  />
+                  <BottomNavigationAction label="Cast" icon={<SendIcon />} />
                 </BottomNavigation>
               );
             }
@@ -597,10 +595,7 @@ export const Content: FC<Props> = ({ castId, embeds, parentPfp }) => {
                 />
                 <BottomNavigationAction label="Text" icon={<TextIcon />} />
                 <BottomNavigationAction label="Crop" icon={<CropIcon />} />
-                <BottomNavigationAction
-                  label="Download"
-                  icon={<DownloadIcon />}
-                />
+                <BottomNavigationAction label="Cast" icon={<SendIcon />} />
               </BottomNavigation>;
             }
             case "text": {
@@ -641,10 +636,7 @@ export const Content: FC<Props> = ({ castId, embeds, parentPfp }) => {
                   />
                   <BottomNavigationAction label="Text" icon={<TextIcon />} />
                   <BottomNavigationAction label="Crop" icon={<CropIcon />} />
-                  <BottomNavigationAction
-                    label="Download"
-                    icon={<DownloadIcon />}
-                  />
+                  <BottomNavigationAction label="Cast" icon={<SendIcon />} />
                 </BottomNavigation>
               );
             }
