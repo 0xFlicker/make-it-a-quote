@@ -97,6 +97,7 @@ export function useCast({
             data: {
               cast: {
                 ...(castId && { parent: castId }),
+                text: "flicking",
                 embeds: [json.fileName],
               },
             },
