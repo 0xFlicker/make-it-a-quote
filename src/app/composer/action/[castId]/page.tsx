@@ -5,13 +5,12 @@ import { fetchCast } from "@/neynar/cast";
 import { isAddress } from "viem";
 
 const MainPage = async ({ params }: { params: { castId: string } }) => {
-  if (!isAddress(params.castId)) {
-    return <div>Invalid cast id</div>;
-  }
-  const { cast } = await fetchCast({
-    identifier: params.castId,
-    type: "hash",
-  });
+  const { cast } = isAddress(params.castId)
+    ? await fetchCast({
+        identifier: params.castId as `0x${string}`,
+        type: "hash",
+      })
+    : { cast: undefined };
 
   const embeds = cast?.embeds?.map((embed) => embed.url);
   console.log(embeds);
