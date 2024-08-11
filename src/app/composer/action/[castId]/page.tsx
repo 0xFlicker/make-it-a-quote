@@ -12,10 +12,8 @@ const MainPage = async ({ params }: { params: { castId: string } }) => {
     identifier: params.castId,
     type: "hash",
   });
-  if (!cast) {
-    return <div>Cast not found</div>;
-  }
-  const embeds = cast.embeds?.map((embed) => embed.url);
+
+  const embeds = cast?.embeds?.map((embed) => embed.url);
   console.log(embeds);
   return (
     <>
