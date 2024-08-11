@@ -257,8 +257,11 @@ const TEXT_DEFAULTS: {
     align: "left",
   },
 };
-
-export const Content: FC = () => {
+type Props = {
+  embeds?: string[];
+  parentPfp?: string;
+};
+export const Content: FC<Props> = ({ embeds, parentPfp }) => {
   const { onTextSelect } = useFormats();
   const [stickerAnchorEl, setStickerAnchorEl] = useState<HTMLElement | null>(
     null,
@@ -466,9 +469,8 @@ export const Content: FC = () => {
                 }}
                 onImportEmbed={addAndRestImage}
                 onImportParentPfp={addAndRestImage}
-                embeds={[
-                  "https://d3n3snwzfu7e0e.cloudfront.net/Th54snTfVkLPGAk6-qX-u",
-                ]}
+                embeds={embeds}
+                parentPfp={parentPfp}
                 fabricCanvas={state.fabricCanvas}
               />
             );
@@ -483,9 +485,8 @@ export const Content: FC = () => {
                 }}
                 onImportEmbed={addAndRestImage}
                 onImportParentPfp={addAndRestImage}
-                embeds={[
-                  "https://d3n3snwzfu7e0e.cloudfront.net/Th54snTfVkLPGAk6-qX-u",
-                ]}
+                embeds={embeds}
+                parentPfp={parentPfp}
               />
             );
           }
@@ -720,10 +721,10 @@ export const Content: FC = () => {
   );
 };
 
-export const PfpEditor: FC = () => {
+export const PfpEditor: FC<Props> = (props) => {
   return (
     <FormatsProvider>
-      <Content />
+      <Content {...props} />
     </FormatsProvider>
   );
 };
