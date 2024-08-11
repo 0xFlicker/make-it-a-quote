@@ -44,6 +44,7 @@ import { ParagraphStyles } from "./Formats/ParagraphPopover";
 import { useImage } from "../hooks/useImage";
 import { FormatsProvider, useFormats } from "./Formats/useFormats";
 import { ImageBar } from "./ImageBar";
+import { useCast } from "../hooks/useCast";
 
 interface State {
   isEmpty: boolean;
@@ -260,8 +261,9 @@ const TEXT_DEFAULTS: {
 type Props = {
   embeds?: string[];
   parentPfp?: string;
+  castId?: `0x${string}`;
 };
-export const Content: FC<Props> = ({ embeds, parentPfp }) => {
+export const Content: FC<Props> = ({ castId, embeds, parentPfp }) => {
   const { onTextSelect } = useFormats();
   const [stickerAnchorEl, setStickerAnchorEl] = useState<HTMLElement | null>(
     null,
@@ -394,6 +396,10 @@ export const Content: FC<Props> = ({ embeds, parentPfp }) => {
   });
   const upload = useUpload({
     fabricCanvas: state.fabricCanvas,
+  });
+  const doCast = useCast({
+    fabricCanvas: state.fabricCanvas,
+    castId,
   });
   const addText = useCallback(() => {
     if (state.fabricCanvas) {
@@ -531,7 +537,7 @@ export const Content: FC<Props> = ({ embeds, parentPfp }) => {
                         break;
                       }
                       case 3: {
-                        upload();
+                        doCast();
                         break;
                       }
                       default: {
@@ -575,7 +581,7 @@ export const Content: FC<Props> = ({ embeds, parentPfp }) => {
                       break;
                     }
                     case 2: {
-                      download();
+                      doCast();
                       break;
                     }
                     default: {
@@ -619,7 +625,7 @@ export const Content: FC<Props> = ({ embeds, parentPfp }) => {
                         break;
                       }
                       case 3: {
-                        download();
+                        doCast();
                         break;
                       }
                       default: {
