@@ -25,14 +25,14 @@ export const POST = frames(async (ctx) => {
   );
 
   // in case of composer actions we can't use ctx.state because the composer actions
-  if (!ctx.composerActionState) {
-    return error("Must be called from composer");
-  }
+  // if (!ctx.composerActionState) {
+  //   return error("Must be called from composer");
+  // }
 
-  createGameUrl.searchParams.set(
-    "state",
-    JSON.stringify(ctx.composerActionState),
-  );
+  // createGameUrl.searchParams.set(
+  //   "state",
+  //   JSON.stringify(ctx.composerActionState),
+  // );
 
   return composerActionForm({
     title: "flicking",
