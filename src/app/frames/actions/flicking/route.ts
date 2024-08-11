@@ -21,7 +21,7 @@ export const POST = frames(async (ctx) => {
   const castId = ctx.message?.castId?.hash;
   const createGameUrl = new URL(
     `/composer/action${castId ? `/${castId}` : ""}`,
-    "http://localhost:3000",
+    baseUrl,
   );
 
   // in case of composer actions we can't use ctx.state because the composer actions
