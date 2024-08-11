@@ -176,7 +176,7 @@ export class EditableImage<
     const changeVector = new Point(lastLeft! - this.left, lastTop! - this.top);
     const correctMovement = util.transformPoint(
       changeVector,
-      this.moveTransformationMatrix
+      this.moveTransformationMatrix,
     );
     const width =
       (this._element as HTMLImageElement).naturalWidth || this._element.width;
@@ -215,7 +215,7 @@ export class EditableImage<
     this.lastEventLeft = this.left;
     this.lastEventTop = this.top;
     this.moveTransformationMatrix = util.invertTransform(
-      this.calcTransformMatrix()
+      this.calcTransformMatrix(),
     );
     this.changeToPositionMatrix = [...this.calcTransformMatrix()];
     this.moveTransformationMatrix[4] = 0;
@@ -269,7 +269,7 @@ export class EditableImage<
         "center",
         "center",
         originX,
-        originY
+        originY,
       );
     } else {
       p = new Point(this.left, this.top);
@@ -307,7 +307,7 @@ export class EditableImage<
           width: aspectRatio,
           height: 1,
         },
-        this.canvas.safeArea
+        this.canvas.safeArea,
       ) / this.canvas.getZoom();
 
     // with this scale i can calculate how many pixels the new box is:
@@ -418,7 +418,7 @@ export class EditableImage<
     // objectMatrix will map a pixel from the center of the crop area to the canvas
     const objectMatrix = util.multiplyTransformMatrices(
       this.canvas.viewportTransform,
-      this.calcTransformMatrix()
+      this.calcTransformMatrix(),
     );
 
     return util.transformPoint(
@@ -426,7 +426,7 @@ export class EditableImage<
         x: x - (this.width / 2 + this.cropX),
         y: y - (this.height / 2 + this.cropY),
       },
-      objectMatrix
+      objectMatrix,
     );
   }
 
@@ -435,7 +435,7 @@ export class EditableImage<
   getUnionOfImageAndSafeAreaLimits(): BoundingBoxLimits {
     if (this.canvas === undefined) {
       throw new Error(
-        "getLimitsofUnionOfImageAndSafeArea canvas must be defined"
+        "getLimitsofUnionOfImageAndSafeArea canvas must be defined",
       );
     }
 
@@ -447,7 +447,7 @@ export class EditableImage<
     const imgTopLeftCanvas = this.getPixelCoordInCanvas(0, 0);
     const imgBotRightCanvas = this.getPixelCoordInCanvas(
       originalSize.width,
-      originalSize.height
+      originalSize.height,
     );
     const safeAreaLeftLimit = safeArea.x;
     const safeAreaRightLimit = safeArea.x + safeArea.width;
@@ -486,7 +486,7 @@ export class EditableImage<
       0,
       0,
       width,
-      height
+      height,
     );
 
     return new Promise((resolve) => {

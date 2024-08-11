@@ -37,12 +37,19 @@ import { FormatBar } from "./Formats/FormatBar";
 import "../fabric/register";
 import { stickers } from "../stickers";
 import { FormatStyles, FormatPopover } from "./Formats/FormatPopover";
+import { useUpload } from "../hooks/useUpload";
+import { FontStyles } from "./Formats/FontPopover";
+import { StrokeStyles } from "./Formats/StrokePopover";
+import { ParagraphStyles } from "./Formats/ParagraphPopover";
+import { useImage } from "../hooks/useImage";
+import { FormatsProvider, useFormats } from "./Formats/useFormats";
+import { ImageBar } from "./ImageBar";
 
 interface State {
   isEmpty: boolean;
   file: File | null;
   fabricCanvas: CanvasWithSafeArea | null;
-  activeTool: "stickers" | "crop" | "text" | null;
+  activeTool: "stickers" | "crop" | "text" | "image" | null;
   textStyles?: FormatStyles;
   activePopover?: "text" | "sticker" | null;
   openDialog?: "import" | null;
@@ -70,6 +77,14 @@ interface ExitCropAction {
   type: "exitCrop";
 }
 
+interface EnterImageAction {
+  type: "enterImage";
+}
+
+interface ExitImageAction {
+  type: "exitImage";
+}
+
 interface OpenStickerSelectAction {
   type: "openStickerSelect";
 }
@@ -80,7 +95,6 @@ interface CloseStickerSelectAction {
 
 interface EnterTextAction {
   type: "enterText";
-  textStyles?: FormatStyles;
 }
 
 interface ExitTextAction {
@@ -107,6 +121,8 @@ type Action =
   | CanvasReadyAction
   | EnterCropAction
   | ExitCropAction
+  | EnterImageAction
+  | ExitImageAction
   | OpenStickerSelectAction
   | CloseStickerSelectAction
   | EnterTextAction
@@ -151,6 +167,18 @@ function reducer(state: State, action: Action): State {
         activeTool: null,
       };
     }
+    case "enterImage": {
+      return {
+        ...state,
+        activeTool: "image",
+      };
+    }
+    case "exitImage": {
+      return {
+        ...state,
+        activeTool: null,
+      };
+    }
     case "openStickerSelect": {
       return {
         ...state,
@@ -167,7 +195,6 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         activeTool: "text",
-        textStyles: action.textStyles,
       };
     }
     case "exitText": {
@@ -207,7 +234,32 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export const PfpEditor: FC = () => {
+const TEXT_DEFAULTS: {
+  format: FormatStyles;
+  font: FontStyles;
+  stroke: StrokeStyles;
+  paragraph: ParagraphStyles;
+} = {
+  format: {
+    isBold: false,
+    isItalic: false,
+    isUnderlined: false,
+  },
+  font: {
+    size: 16,
+  },
+  stroke: {
+    width: 1,
+    fillColor: "#FF000000",
+    strokeColor: "#FFFFFFFF",
+  },
+  paragraph: {
+    align: "left",
+  },
+};
+
+export const Content: FC = () => {
+  const { onTextSelect } = useFormats();
   const [stickerAnchorEl, setStickerAnchorEl] = useState<HTMLElement | null>(
     null,
   );
@@ -290,12 +342,56 @@ export const PfpEditor: FC = () => {
   const onLoaded = useCallback(() => {
     reset();
   }, [reset]);
-  useEditableImage({ canvas: state.fabricCanvas, src: fileUrl, onLoaded });
+  useEditableImage({
+    canvas: state.fabricCanvas,
+    src: fileUrl,
+    onLoaded,
+    onSelected() {
+      dispatch({
+        type: "enterImage",
+      });
+    },
+  });
+  const { addImage } = useImage({
+    aspectRatio: 1,
+    canvas: state.fabricCanvas,
+  });
+
+  const addAndRestImage = useCallback(
+    async (src: string) => {
+      const image = new Image();
+      image.src = src;
+      await new Promise((resolve, reject) => {
+        image.onload = resolve;
+        image.onerror = reject;
+      });
+      const editableImage = addImage(image);
+      editableImage?.on("selected", () => {
+        dispatch({
+          type: "enterImage",
+        });
+      });
+      state.fabricCanvas?.renderAll();
+    },
+    [addImage],
+  );
+
+  // useEffect(() => {
+  //   if (fileUrl) {
+  //     setTimeout(() => {
+  //       addAndRestImage(fileUrl);
+  //       console.log("fileUrl", fileUrl);
+  //       reset();
+  //     }, 250);
+  //   }
+  // }, [fileUrl, addAndRestImage, reset]);
 
   const download = useExport({
     fabricCanvas: state.fabricCanvas,
   });
-
+  const upload = useUpload({
+    fabricCanvas: state.fabricCanvas,
+  });
   const addText = useCallback(() => {
     if (state.fabricCanvas) {
       const { fabricCanvas } = state;
@@ -303,16 +399,19 @@ export const PfpEditor: FC = () => {
         left: 100,
         top: 100,
         fontSize: 100,
+        fontFamily: "sans-serif",
       });
 
       text.on("selected", () => {
+        let align: ParagraphStyles["align"] = "left";
+        if (text.textAlign === "center") {
+          align = "center";
+        } else if (text.textAlign === "right") {
+          align = "right";
+        }
+        onTextSelect(text);
         dispatch({
           type: "enterText",
-          textStyles: {
-            isBold: text.fontWeight === "bold",
-            isItalic: text.fontStyle === "italic",
-            isUnderlined: text.underline,
-          },
         });
         return false;
       });
@@ -330,14 +429,14 @@ export const PfpEditor: FC = () => {
       fabricCanvas.add(text);
       fabricCanvas.renderAll();
     }
-  }, [state]);
+  }, [onTextSelect, state]);
   const toolbarHeight = 64;
   const bottomNavigationHeight = 50;
 
   return (
     <>
-      {state.activeTool === "text" ? (
-        <FormatBar />
+      {/* {state.activeTool === "text" ? (
+        <FormatBar fabricCanvas={state.fabricCanvas} />
       ) : (
         <EmptyBar
           onImport={() => {
@@ -345,8 +444,53 @@ export const PfpEditor: FC = () => {
               type: "openImportDialog",
             });
           }}
+          onImportEmbed={addAndRestImage}
+          onImportParentPfp={addAndRestImage}
+          embeds={[
+            "https://d3n3snwzfu7e0e.cloudfront.net/Th54snTfVkLPGAk6-qX-u",
+          ]}
         />
-      )}
+      )} */}
+      {(() => {
+        switch (state.activeTool) {
+          case "text": {
+            return <FormatBar fabricCanvas={state.fabricCanvas} />;
+          }
+          case "image": {
+            return (
+              <ImageBar
+                onImport={() => {
+                  dispatch({
+                    type: "openImportDialog",
+                  });
+                }}
+                onImportEmbed={addAndRestImage}
+                onImportParentPfp={addAndRestImage}
+                embeds={[
+                  "https://d3n3snwzfu7e0e.cloudfront.net/Th54snTfVkLPGAk6-qX-u",
+                ]}
+                fabricCanvas={state.fabricCanvas}
+              />
+            );
+          }
+          default: {
+            return (
+              <EmptyBar
+                onImport={() => {
+                  dispatch({
+                    type: "openImportDialog",
+                  });
+                }}
+                onImportEmbed={addAndRestImage}
+                onImportParentPfp={addAndRestImage}
+                embeds={[
+                  "https://d3n3snwzfu7e0e.cloudfront.net/Th54snTfVkLPGAk6-qX-u",
+                ]}
+              />
+            );
+          }
+        }
+      })()}
       <Container
         sx={{
           display: "flex",
@@ -379,9 +523,6 @@ export const PfpEditor: FC = () => {
                       }
                       case 1: {
                         addText();
-                        dispatch({
-                          type: "enterText",
-                        });
                         break;
                       }
                       case 2: {
@@ -389,7 +530,7 @@ export const PfpEditor: FC = () => {
                         break;
                       }
                       case 3: {
-                        download();
+                        upload();
                         break;
                       }
                       default: {
@@ -426,9 +567,6 @@ export const PfpEditor: FC = () => {
                     }
                     case 1: {
                       addText();
-                      dispatch({
-                        type: "enterText",
-                      });
                       break;
                     }
                     case 2: {
@@ -473,9 +611,6 @@ export const PfpEditor: FC = () => {
                       }
                       case 1: {
                         addText();
-                        dispatch({
-                          type: "enterText",
-                        });
                         break;
                       }
                       case 2: {
@@ -582,5 +717,13 @@ export const PfpEditor: FC = () => {
         }}
       />
     </>
+  );
+};
+
+export const PfpEditor: FC = () => {
+  return (
+    <FormatsProvider>
+      <Content />
+    </FormatsProvider>
   );
 };

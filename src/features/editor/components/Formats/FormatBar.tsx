@@ -1,5 +1,13 @@
-import React, { FC, useCallback, useMemo, useReducer, useRef } from "react";
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from "react";
 import Toolbar from "@mui/material/Toolbar";
+import { IText } from "fabric";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -24,12 +32,18 @@ import { StrokePopover } from "./StrokePopover";
 import { useFormats } from "./useFormats";
 import { useTheme } from "@mui/material/styles";
 import { ColorPicker } from "./ColorPickerPopover";
+import { Icon } from "@mui/material";
+import { CanvasWithSafeArea } from "../../helpers/CanvasWithSafeArea";
+import { toCssColor } from "@/utils/colors";
+import { ZOrderButtonGroup } from "../ZOrderButtnGroup";
 
 const activeButtonStyle = {
   backgroundColor: "#555555", // Light gray background for active state
 };
 
-export const FormatBar: FC<{}> = ({}) => {
+export const FormatBar: FC<{
+  fabricCanvas: CanvasWithSafeArea | null;
+}> = ({ fabricCanvas }) => {
   const fontButtonRef = useRef<HTMLButtonElement>(null);
   const paragraphStyleButtonRef = useRef<HTMLButtonElement>(null);
   const formatButtonRef = useRef<HTMLButtonElement>(null);
@@ -44,7 +58,6 @@ export const FormatBar: FC<{}> = ({}) => {
     popoverOpen,
     onFontChange,
     onFormatChange,
-
     onParagraphChange,
     onStrokeChange,
     onColorFill,
@@ -59,6 +72,32 @@ export const FormatBar: FC<{}> = ({}) => {
     toggleItalic,
     toggleUnderline,
   } = useFormats();
+
+  useEffect(() => {
+    if (fabricCanvas) {
+      // get current selection
+      const activeObject = fabricCanvas.getActiveObject();
+      console.log(activeObject);
+      if (!activeObject) {
+        return;
+      }
+      if (activeObject.type == "i-text") {
+        const text = activeObject as IText;
+        if (text.fill !== stroke.fillColor) {
+          text.set("fill", stroke.fillColor);
+          fabricCanvas.renderAll();
+        }
+        if (text.stroke !== stroke.strokeColor) {
+          text.set("stroke", stroke.strokeColor);
+          fabricCanvas.renderAll();
+        }
+        if (text.strokeWidth !== stroke.width) {
+          text.set("strokeWidth", stroke.width);
+          fabricCanvas.renderAll();
+        }
+      }
+    }
+  }, [fabricCanvas, stroke.strokeColor, stroke.fillColor, stroke.width]);
 
   const theme = useTheme();
 
@@ -146,6 +185,7 @@ export const FormatBar: FC<{}> = ({}) => {
               value={stroke.width}
               onChange={(e) => onStrokeWidthChange(e.target.value as number)}
             >
+              <MenuItem value={0}>0 px</MenuItem>
               <MenuItem value={1}>1 px</MenuItem>
               <MenuItem value={2}>2 px</MenuItem>
               <MenuItem value={3}>3 px</MenuItem>
@@ -153,6 +193,18 @@ export const FormatBar: FC<{}> = ({}) => {
               <MenuItem value={5}>5 px</MenuItem>
             </Select>
           </FormControl>
+          <IconButton
+            ref={fillColorButtonRef}
+            onClick={() => openPopover("fillColor")}
+          >
+            <FormatColorFill />
+          </IconButton>
+          <IconButton
+            ref={strokeColorButtonRef}
+            onClick={() => openPopover("strokeColor")}
+          >
+            <FormatColorTextOutlined />
+          </IconButton>
         </ButtonGroup>
         <Box sx={{ flexGrow: 1, ...styles.desktop }} />
         <ButtonGroup
@@ -183,6 +235,8 @@ export const FormatBar: FC<{}> = ({}) => {
             <FormatColorFill />
           </IconButton>
         </ButtonGroup>
+        <Box sx={{ flexGrow: 1 }} />
+        <ZOrderButtonGroup fabricCanvas={fabricCanvas} />
       </Toolbar>
 
       <FormatPopover
@@ -227,7 +281,10 @@ export const FormatBar: FC<{}> = ({}) => {
         onClose={() => {
           closePopover("fillColor");
         }}
-        onColorChange={(color) => onColorFill(color.toString())}
+        onColorChange={(color) => {
+          console.log(`fill color: ${toCssColor(color)}`);
+          onColorFill(toCssColor(color));
+        }}
         initialColor={stroke.fillColor}
       />
       <ColorPicker
@@ -236,7 +293,7 @@ export const FormatBar: FC<{}> = ({}) => {
         onClose={() => {
           closePopover("strokeColor");
         }}
-        onColorChange={(color) => onColorStroke(color.toString())}
+        onColorChange={(color) => onColorStroke(toCssColor(color))}
         initialColor={stroke.strokeColor}
       />
     </>

@@ -1,9 +1,9 @@
 import React, { FC } from "react";
-import { PhotoshopPicker } from "react-color";
+import { ChromePicker, Color, RGBColor } from "react-color";
 import Popover from "@mui/material/Popover";
 
 export const ColorPicker: FC<{
-  onColorChange: (color: string) => void;
+  onColorChange: (color: RGBColor) => void;
   open: boolean;
   anchorEl: HTMLElement | null;
   onClose: () => void;
@@ -22,10 +22,12 @@ export const ColorPicker: FC<{
         vertical: "bottom",
         horizontal: "center",
       }}
+      sx={{ top: 64 }}
     >
-      <PhotoshopPicker
+      <ChromePicker
         color={initialColor}
-        onChange={(color) => onColorChange(color.hex)}
+        disableAlpha={false}
+        onChange={(color) => onColorChange(color.rgb)}
       />
     </Popover>
   );

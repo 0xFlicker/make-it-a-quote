@@ -4,10 +4,20 @@ import { FileMenu } from "./FileMenu";
 
 export const EmptyBar: FC<{
   onImport: () => void;
-}> = ({ onImport }) => {
+  onImportEmbed: (embed: string) => void;
+  onImportParentPfp: (parentPfp: string) => void;
+  embeds?: string[];
+  parentPfp?: string;
+}> = ({ onImport, onImportEmbed, onImportParentPfp, embeds, parentPfp }) => {
   return (
     <Toolbar>
-      <FileMenu onImport={onImport} />
+      <FileMenu
+        onImport={onImport}
+        onImportEmbed={onImportEmbed}
+        onImportParentPfp={onImportParentPfp}
+        embeds={embeds}
+        parentPfp={parentPfp}
+      />
     </Toolbar>
   );
 };

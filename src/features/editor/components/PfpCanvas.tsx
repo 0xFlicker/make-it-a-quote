@@ -1,4 +1,12 @@
-import { CSSProperties, FC, useMemo, useRef } from "react";
+import {
+  CSSProperties,
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import { FabricCanvasWrapper } from "./FabricCanvasWrapper";
@@ -8,13 +16,55 @@ import { CanvasWithSafeArea } from "../helpers/CanvasWithSafeArea";
 export const PfpCanvas: FC<{
   onCanvasReady: (canvas: CanvasWithSafeArea | null) => void;
   aspectRatio?: number;
-  width?: number;
-  height?: number;
-}> = ({ aspectRatio, onCanvasReady, width, height }) => {
+}> = ({ aspectRatio = 1, onCanvasReady }) => {
   const safeAreaRef = useRef<HTMLDivElement>(null);
   const centerControlsRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
+  const [zoom, setZoom] = useState(1);
+  const canvasRef = useRef<CanvasWithSafeArea | null>(null);
+
+  const handleWheel = (event: WheelEvent) => {
+    event.preventDefault();
+    setZoom((prevZoom) =>
+      Math.min(Math.max(prevZoom + event.deltaY * 0.001, 0.75), 2),
+    );
+    canvasRef.current?.renderAll();
+  };
+
+  const handlePinch = (event: TouchEvent) => {
+    if (event.touches.length === 2) {
+      const distance = Math.hypot(
+        event.touches[0].clientX - event.touches[1].clientX,
+        event.touches[0].clientY - event.touches[1].clientY,
+      );
+      setZoom((prevZoom) =>
+        Math.min(Math.max(prevZoom * (distance / 100), 0.75), 2),
+      );
+      canvasRef.current?.renderAll();
+    }
+  };
+
+  useEffect(() => {
+    const centerControls = centerControlsRef.current;
+    if (centerControls) {
+      centerControls.addEventListener("wheel", handleWheel);
+      centerControls.addEventListener("touchmove", handlePinch);
+    }
+    return () => {
+      if (centerControls) {
+        centerControls.removeEventListener("wheel", handleWheel);
+        centerControls.removeEventListener("touchmove", handlePinch);
+      }
+    };
+  }, []);
   const styles = useMemo(() => {
+    const minSize = Math.min(
+      centerControlsRef.current?.clientWidth || 0,
+      centerControlsRef.current?.clientHeight || 0,
+    );
+    const size = Math.max(minSize * 0.85, 600 * zoom);
+    const width = size * aspectRatio;
+    const height = size / aspectRatio;
     return {
       safeArea: {
         backgroundColor: theme.palette.grey[300],
@@ -23,9 +73,9 @@ export const PfpCanvas: FC<{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: 600,
-        width: 600,
-        maxWidth: `calc(100% - ${2 * 16}px)`,
+        height,
+        width,
+        // maxWidth: `calc(100% - ${2 * 16}px)`,
         // [theme.breakpoints.up("sm")]: {
         //   width: "calc(300px * var(--aspect-ratio))", // Example for extra small screens
         // },
@@ -43,11 +93,19 @@ export const PfpCanvas: FC<{
     };
   }, [
     aspectRatio,
-    theme.breakpoints,
     theme.palette.grey,
     theme.shadows,
     theme.shape.borderRadius,
+    zoom,
   ]);
+
+  const handleCanvasReady = useCallback(
+    (canvas: CanvasWithSafeArea | null) => {
+      onCanvasReady(canvas);
+      canvasRef.current = canvas;
+    },
+    [onCanvasReady],
+  );
   return (
     <Box
       ref={centerControlsRef}
@@ -58,10 +116,11 @@ export const PfpCanvas: FC<{
       position="relative"
       padding="16px 0px"
       height="100%"
+      overflow="hidden"
     >
       <FabricCanvasWrapper
         contentResizeHandler={handleResizeImage}
-        onCanvasReady={onCanvasReady}
+        onCanvasReady={handleCanvasReady}
         safeAreaRef={safeAreaRef}
         safeAreaContainerRef={centerControlsRef}
       />

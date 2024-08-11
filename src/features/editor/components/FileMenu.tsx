@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import HamburgerIcon from "@mui/icons-material/Menu";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -15,7 +15,11 @@ const StyledHamburgerIcon = styled(HamburgerIcon)({
 
 export const FileMenu: FC<{
   onImport: () => void;
-}> = ({ onImport }) => {
+  onImportEmbed: (embed: string) => void;
+  onImportParentPfp: (parentPfp: string) => void;
+  embeds?: string[];
+  parentPfp?: string;
+}> = ({ onImport, onImportEmbed, onImportParentPfp, embeds, parentPfp }) => {
   const [anchorEl, setAnchorEl] = useState<null | SVGElement>(null);
 
   const handleClick = (event: React.MouseEvent<SVGElement>) => {
@@ -48,6 +52,37 @@ export const FileMenu: FC<{
             </ListItemIcon>
             <ListItemText>Import</ListItemText>
           </MenuItem>
+          {embeds && embeds.length > 0 && (
+            <>
+              {embeds.map((embed) => (
+                <MenuItem
+                  key={embed}
+                  onClick={() => {
+                    handleClose();
+                    onImportEmbed(embed);
+                  }}
+                >
+                  <ListItemText>Import embed</ListItemText>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={embed}
+                    alt="embed preview"
+                    style={{ width: 50, height: 50, marginRight: 8 }}
+                  />
+                </MenuItem>
+              ))}
+            </>
+          )}
+          {parentPfp && (
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                onImportParentPfp(parentPfp);
+              }}
+            >
+              <ListItemText>Import pfp from parent cast</ListItemText>
+            </MenuItem>
+          )}
         </Paper>
       </Menu>
     </>

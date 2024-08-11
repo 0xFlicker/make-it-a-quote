@@ -1,8 +1,17 @@
-import React, { FC, useCallback, useReducer, useRef } from "react";
+import React, {
+  FC,
+  useCallback,
+  useReducer,
+  useRef,
+  createContext,
+  useContext,
+  PropsWithChildren,
+} from "react";
 import type { FormatStyles } from "./FormatPopover";
 import type { ParagraphStyles } from "./ParagraphPopover";
 import type { FontStyles } from "./FontPopover";
 import type { StrokeStyles } from "./StrokePopover";
+import { IText } from "fabric";
 
 type State = {
   font: FontStyles;
@@ -35,7 +44,16 @@ type Action =
   | { type: "setFont"; payload: FontStyles }
   | { type: "setFontSize"; payload: number }
   | { type: "openPopover"; payload: State["popoverOpen"] }
-  | { type: "closePopover"; payload: State["popoverOpen"] };
+  | { type: "closePopover"; payload: State["popoverOpen"] }
+  | {
+      type: "selectFormats";
+      payload: {
+        format: FormatStyles;
+        font: FontStyles;
+        paragraph: ParagraphStyles;
+        stroke: StrokeStyles;
+      };
+    };
 
 const initialState: State = {
   format: {
@@ -59,6 +77,14 @@ const initialState: State = {
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
+    case "selectFormats":
+      return {
+        ...state,
+        format: action.payload.format,
+        font: action.payload.font,
+        paragraph: action.payload.paragraph,
+        stroke: action.payload.stroke,
+      };
     case "setFont":
       return { ...state, font: action.payload };
     case "setFontSize":
@@ -113,75 +139,153 @@ function reducer(state: State, action: Action): State {
       return state;
   }
 }
-export function useFormats() {
+
+const FormatsContext = createContext<{
+  state: State;
+  dispatch: React.Dispatch<Action>;
+} | null>(null);
+
+export const FormatsProvider: FC<PropsWithChildren> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const onFormatChange = useCallback((format: FormatStyles) => {
-    dispatch({ type: "setFormat", payload: format });
-  }, []);
+  return (
+    <FormatsContext.Provider value={{ state, dispatch }}>
+      {children}
+    </FormatsContext.Provider>
+  );
+};
 
-  const onParagraphChange = useCallback((paragraph: ParagraphStyles) => {
-    dispatch({ type: "setParagraph", payload: paragraph });
-  }, []);
+export function useFormats() {
+  const context = useContext(FormatsContext);
+  if (!context) {
+    throw new Error("useFormats must be used within a FormatsProvider");
+  }
+  const { state, dispatch } = context;
 
-  const onFontChange = useCallback((font: FontStyles) => {
-    dispatch({ type: "setFont", payload: font });
-  }, []);
+  const onTextSelect = useCallback(
+    (text: IText) => {
+      dispatch({
+        type: "selectFormats",
+        payload: {
+          format: {
+            isBold: text.fontWeight === "bold",
+            isItalic: text.fontStyle === "italic",
+            isUnderlined: text.underline,
+          },
+          font: {
+            size: text.fontSize,
+          },
+          paragraph: {
+            align: text.textAlign as ParagraphStyles["align"],
+          },
+          stroke: {
+            fillColor: text.fill as string,
+            strokeColor: text.stroke as string,
+            width: text.strokeWidth,
+          },
+        },
+      });
+    },
+    [dispatch],
+  );
 
-  const onStrokeChange = useCallback((stroke: StrokeStyles) => {
-    dispatch({ type: "setStroke", payload: stroke });
-  }, []);
+  const onFormatChange = useCallback(
+    (format: FormatStyles) => {
+      dispatch({ type: "setFormat", payload: format });
+    },
+    [dispatch],
+  );
 
-  const openPopover = useCallback((popover: State["popoverOpen"]) => {
-    dispatch({ type: "openPopover", payload: popover });
-  }, []);
+  const onParagraphChange = useCallback(
+    (paragraph: ParagraphStyles) => {
+      dispatch({ type: "setParagraph", payload: paragraph });
+    },
+    [dispatch],
+  );
 
-  const closePopover = useCallback((popover: State["popoverOpen"]) => {
-    dispatch({ type: "closePopover", payload: popover });
-  }, []);
+  const onFontChange = useCallback(
+    (font: FontStyles) => {
+      dispatch({ type: "setFont", payload: font });
+    },
+    [dispatch],
+  );
 
-  const onFontSizeChange = useCallback((size: number) => {
-    dispatch({ type: "setFontSize", payload: size });
-  }, []);
+  const onStrokeChange = useCallback(
+    (stroke: StrokeStyles) => {
+      dispatch({ type: "setStroke", payload: stroke });
+    },
+    [dispatch],
+  );
+
+  const openPopover = useCallback(
+    (popover: State["popoverOpen"]) => {
+      dispatch({ type: "openPopover", payload: popover });
+    },
+    [dispatch],
+  );
+
+  const closePopover = useCallback(
+    (popover: State["popoverOpen"]) => {
+      dispatch({ type: "closePopover", payload: popover });
+    },
+    [dispatch],
+  );
+
+  const onFontSizeChange = useCallback(
+    (size: number) => {
+      dispatch({ type: "setFontSize", payload: size });
+    },
+    [dispatch],
+  );
 
   const toggleBold = useCallback(() => {
     dispatch({ type: "toggleBold" });
-  }, []);
+  }, [dispatch]);
 
   const toggleItalic = useCallback(() => {
     dispatch({ type: "toggleItalic" });
-  }, []);
+  }, [dispatch]);
 
   const toggleUnderline = useCallback(() => {
     dispatch({ type: "toggleUnderline" });
-  }, []);
+  }, [dispatch]);
 
   const toggleAlignLeft = useCallback(() => {
     dispatch({ type: "toggleAlignLeft" });
-  }, []);
+  }, [dispatch]);
 
   const toggleAlignCenter = useCallback(() => {
     dispatch({ type: "toggleAlignCenter" });
-  }, []);
+  }, [dispatch]);
 
   const toggleAlignRight = useCallback(() => {
     dispatch({ type: "toggleAlignRight" });
-  }, []);
+  }, [dispatch]);
 
-  const onColorFill = useCallback((color: string) => {
-    dispatch({ type: "setColorFill", payload: color });
-  }, []);
+  const onColorFill = useCallback(
+    (color: string) => {
+      dispatch({ type: "setColorFill", payload: color });
+    },
+    [dispatch],
+  );
 
-  const onColorStroke = useCallback((color: string) => {
-    dispatch({ type: "setColorStroke", payload: color });
-  }, []);
+  const onColorStroke = useCallback(
+    (color: string) => {
+      dispatch({ type: "setColorStroke", payload: color });
+    },
+    [dispatch],
+  );
 
-  const onStrokeWidthChange = useCallback((width: number) => {
-    dispatch({ type: "setStrokeWidth", payload: width });
-  }, []);
+  const onStrokeWidthChange = useCallback(
+    (width: number) => {
+      dispatch({ type: "setStrokeWidth", payload: width });
+    },
+    [dispatch],
+  );
 
   return {
     ...state,
+    onTextSelect,
     onFormatChange,
     onParagraphChange,
     onFontChange,

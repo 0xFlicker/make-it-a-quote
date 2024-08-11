@@ -127,6 +127,7 @@ export const FabricCanvasWrapper = ({
   }, [isCanvasWithoutImage, onCanvasReady, shouldFabricCanvasBeOnWindow]);
 
   const handleResizeCanvas = useCallback(() => {
+    console.log("handleResizeCanvas");
     const { current: currentSafeAreaContainer } = safeAreaContainerRef ?? {};
     const { current: currentSafeArea } = safeAreaRef ?? {};
 
@@ -173,6 +174,7 @@ export const FabricCanvasWrapper = ({
     handleResizeCanvas();
 
     if (calcCanUseResizeObserver()) {
+      console.log("ResizeObserver is supported");
       // We don't actually care about what's in the entries array that can be
       // accessed as an argument to the `ResizeObserver` callback, we just want
       // to know _when_ one of the observed elements has changed size. We

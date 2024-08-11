@@ -14,6 +14,7 @@
   "dependencies": {
     "@airstack/frames": "^1.1.12",
     "@airstack/node": "^0.0.7",
+    "@aws-sdk/client-s3": "^3.627.0",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^5.16.6",
@@ -23,6 +24,7 @@
     "fabric": "^6.0.2",
     "frames.js": "^0.18.1",
     "graphql": "^16.9.0",
+    "nanoid": "^5.0.7",
     "next": "14.2.3",
     "react": "^18",
     "react-color": "^2.19.3",
