@@ -21,10 +21,8 @@ class ExportCanvas extends StaticCanvas {
 
 export function useExport({
   fabricCanvas,
-  exportWidth = 400,
   exportHeight = 400,
 }: {
-  exportWidth?: number;
   exportHeight?: number;
   fabricCanvas?: CanvasWithSafeArea | null;
 }) {
@@ -32,19 +30,19 @@ export function useExport({
     if (!fabricCanvas) {
       return;
     }
-    const editableImage = fabricCanvas.getMainImage();
-    if (!editableImage) {
-      return;
-    }
-
-    const imageHeight = editableImage.height;
+    const exportWidth =
+      (exportHeight / fabricCanvas.safeArea.height) *
+      fabricCanvas.safeArea.width;
+    const scaleFactorX = exportWidth / fabricCanvas.safeArea.width;
+    const scaleFactorY = exportHeight / fabricCanvas.safeArea.height;
+    const scaleFactor = Math.min(scaleFactorX, scaleFactorY);
 
     // Create a new canvas to export
-    const exportCanvas = new ExportCanvas(document.createElement("canvas"), {
+    const canvas = document.createElement("canvas");
+    const exportCanvas = new ExportCanvas(canvas, {
       width: exportWidth,
       height: exportHeight,
     });
-
     // export all objects from the original canvas to the export canvas
     const object = fabricCanvas.toJSON();
     // Remove PfpCircle from the export canvas
@@ -52,14 +50,26 @@ export function useExport({
       (obj: Object) => obj.type !== "PfpCircle",
     );
     await exportCanvas.loadFromJSON(object);
-    exportCanvas.viewportTransform = fabricCanvas.viewportTransform;
-
+    console.log({
+      exportWidth,
+      exportHeight,
+      safeWidth: fabricCanvas.safeArea.width,
+      safeHeight: fabricCanvas.safeArea.height,
+    });
+    const vpt = fabricCanvas.viewportTransform;
+    exportCanvas.viewportTransform = vpt;
     // Scale the export canvas to the correct size
-    exportCanvas.setZoom(exportHeight / imageHeight);
-    // Pan the export canvas to the correct position
+    exportCanvas.setZoom(fabricCanvas.getZoom() * scaleFactor);
+    console.log("Current zoom:", fabricCanvas.getZoom());
     exportCanvas.relativePan(
-      new Point(-fabricCanvas.safeArea.x - 1, -fabricCanvas.safeArea.y - 1),
+      new Point(
+        -fabricCanvas.safeArea.x * scaleFactor,
+        -fabricCanvas.safeArea.y * scaleFactor,
+      ),
     );
+
+    // Pan the export canvas to the correct position
+    console.log("Current safe area:", fabricCanvas.safeArea);
 
     exportCanvas.renderAll();
     // Now export and download the image
@@ -71,7 +81,31 @@ export function useExport({
       link.href = URL.createObjectURL(blob);
       link.download = "pfp.png";
       link.click();
+
+      // document.body.appendChild(canvas);
+      // canvas.style.position = "absolute";
+      // canvas.style.top = "0";
+      // canvas.style.left = "0";
+      // canvas.style.zIndex = "1000";
+      // canvas.style.pointerEvents = "none";
+      // canvas.style.opacity = "0";
+      // canvas.style.transition = "opacity 2s";
+      // canvas.style.backgroundColor = "white";
+      // // apply a scale to the canvas to make it smaller
+      // canvas.style.transform = `scale(${1 / 4})`;
+
+      // setTimeout(() => {
+      //   canvas.style.opacity = "1";
+      // }, 0);
+
+      // setTimeout(() => {
+      //   canvas.style.opacity = "0";
+      // }, 5000);
+
+      // setTimeout(() => {
+      //   document.body.removeChild(canvas);
+      // }, 7000);
     }, "image/png");
-  }, [exportHeight, exportWidth, fabricCanvas]);
+  }, [exportHeight, fabricCanvas]);
   return download;
 }

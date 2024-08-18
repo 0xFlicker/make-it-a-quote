@@ -6,7 +6,7 @@ const MainPage = () => {
   return (
     <>
       <DefaultProvider>
-        <PfpEditor />
+        <PfpEditor aspectRatio={1} />
       </DefaultProvider>
       {/* <main className="">
         <div className="flex flex-col justify-center items-center container md:flex-row overflow-hidden bg-main pt-10 xl:pt-20 px-2 md:px-2 lg:px-4">

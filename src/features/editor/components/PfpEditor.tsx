@@ -12,6 +12,7 @@ import {
   useEffect,
   useMemo,
   useReducer,
+  useRef,
   useState,
 } from "react";
 import CropIcon from "@mui/icons-material/Crop";
@@ -46,6 +47,7 @@ import { useImage } from "../hooks/useImage";
 import { FormatsProvider, useFormats } from "./Formats/useFormats";
 import { ImageBar } from "./ImageBar";
 import { useCast } from "../hooks/useCast";
+import { usePreview } from "../hooks/usePreview";
 
 interface State {
   isEmpty: boolean;
@@ -263,8 +265,14 @@ type Props = {
   embeds?: string[];
   parentPfp?: string;
   castId?: `0x${string}`;
+  aspectRatio?: number;
 };
-export const Content: FC<Props> = ({ castId, embeds, parentPfp }) => {
+export const Content: FC<Props> = ({
+  aspectRatio,
+  castId,
+  embeds,
+  parentPfp,
+}) => {
   const { onTextSelect } = useFormats();
   const [stickerAnchorEl, setStickerAnchorEl] = useState<HTMLElement | null>(
     null,
@@ -359,7 +367,7 @@ export const Content: FC<Props> = ({ castId, embeds, parentPfp }) => {
     },
   });
   const { addImage } = useImage({
-    aspectRatio: 1,
+    aspectRatio,
     canvas: state.fabricCanvas,
   });
 
@@ -394,6 +402,7 @@ export const Content: FC<Props> = ({ castId, embeds, parentPfp }) => {
 
   const download = useExport({
     fabricCanvas: state.fabricCanvas,
+    exportHeight: 512,
   });
   const upload = useUpload({
     fabricCanvas: state.fabricCanvas,
@@ -464,7 +473,21 @@ export const Content: FC<Props> = ({ castId, embeds, parentPfp }) => {
       {(() => {
         switch (state.activeTool) {
           case "text": {
-            return <FormatBar fabricCanvas={state.fabricCanvas} />;
+            return (
+              <FormatBar
+                fabricCanvas={state.fabricCanvas}
+                onDownload={download}
+                onImport={() => {
+                  dispatch({
+                    type: "openImportDialog",
+                  });
+                }}
+                onImportEmbed={addAndRestImage}
+                onImportParentPfp={addAndRestImage}
+                embeds={embeds}
+                parentPfp={parentPfp}
+              />
+            );
           }
           case "image": {
             return (
@@ -485,6 +508,7 @@ export const Content: FC<Props> = ({ castId, embeds, parentPfp }) => {
           default: {
             return (
               <EmptyBar
+                onDownload={download}
                 onImport={() => {
                   dispatch({
                     type: "openImportDialog",
@@ -499,6 +523,7 @@ export const Content: FC<Props> = ({ castId, embeds, parentPfp }) => {
           }
         }
       })()}
+
       <Container
         sx={{
           display: "flex",
@@ -507,7 +532,7 @@ export const Content: FC<Props> = ({ castId, embeds, parentPfp }) => {
         }}
       >
         <Box sx={{ flexGrow: 1, overflow: "auto" }}>
-          <PfpCanvas onCanvasReady={onCanvasReady} />
+          <PfpCanvas onCanvasReady={onCanvasReady} aspectRatio={aspectRatio} />
         </Box>
       </Container>
       <Paper
@@ -538,7 +563,7 @@ export const Content: FC<Props> = ({ castId, embeds, parentPfp }) => {
                         break;
                       }
                       case 3: {
-                        doCast();
+                        download();
                         break;
                       }
                       default: {

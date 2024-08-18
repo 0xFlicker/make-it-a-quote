@@ -6,7 +6,7 @@ import Paper from "@mui/material/Paper";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import UploadIcon from "@mui/icons-material/Upload";
-
+import DownloadIcon from "@mui/icons-material/Download";
 import { styled } from "@mui/material/styles";
 
 const StyledHamburgerIcon = styled(HamburgerIcon)({
@@ -17,9 +17,17 @@ export const FileMenu: FC<{
   onImport: () => void;
   onImportEmbed: (embed: string) => void;
   onImportParentPfp: (parentPfp: string) => void;
+  onDownload: () => void;
   embeds?: string[];
   parentPfp?: string;
-}> = ({ onImport, onImportEmbed, onImportParentPfp, embeds, parentPfp }) => {
+}> = ({
+  onDownload,
+  onImport,
+  onImportEmbed,
+  onImportParentPfp,
+  embeds,
+  parentPfp,
+}) => {
   const [anchorEl, setAnchorEl] = useState<null | SVGElement>(null);
 
   const handleClick = (event: React.MouseEvent<SVGElement>) => {
@@ -51,6 +59,17 @@ export const FileMenu: FC<{
               <UploadIcon />
             </ListItemIcon>
             <ListItemText>Import</ListItemText>
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleClose();
+              onDownload();
+            }}
+          >
+            <ListItemIcon>
+              <DownloadIcon />
+            </ListItemIcon>
+            <ListItemText>Download</ListItemText>
           </MenuItem>
           {embeds && embeds.length > 0 && (
             <>

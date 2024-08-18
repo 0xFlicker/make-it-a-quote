@@ -161,6 +161,18 @@ export class EditableImage<
 
     ctx.restore();
     super._render(ctx);
+
+    // render a box over safe rea
+    // ctx.save();
+    // ctx.strokeStyle = "red";
+    // ctx.lineWidth = 2;
+    // ctx.strokeRect(
+    //   this.canvas.safeArea.x,
+    //   this.canvas.safeArea.y,
+    //   this.canvas.safeArea.width,
+    //   this.canvas.safeArea.height,
+    // );
+    // ctx.restore();
   }
 
   // Pans image while zoom box stays static

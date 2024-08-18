@@ -179,8 +179,9 @@ export function useFormats() {
             align: text.textAlign as ParagraphStyles["align"],
           },
           stroke: {
-            fillColor: text.fill as string,
-            strokeColor: text.stroke as string,
+            fillColor: (text.fill ?? initialState.stroke.fillColor) as string,
+            strokeColor:
+              (text.stroke as string | null) ?? initialState.stroke.strokeColor,
             width: text.strokeWidth,
           },
         },

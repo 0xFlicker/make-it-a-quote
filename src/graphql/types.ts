@@ -1335,7 +1335,6 @@ export type Query = {
   FarcasterValidateFrameMessage: Maybe<FarcasterFrameMessageOutput>;
   PoapEvents: Maybe<PoapEventsOutput>;
   Poaps: Maybe<PoapsOutput>;
-  Snapshots: Maybe<SnapshotsOutput>;
   SocialFollowers: Maybe<SocialFollowerOutput>;
   SocialFollowings: Maybe<SocialFollowingOutput>;
   Socials: Maybe<SocialsOutput>;
@@ -1424,11 +1423,6 @@ export type QueryPoapEventsArgs = {
 
 export type QueryPoapsArgs = {
   input: PoapsInput;
-};
-
-
-export type QuerySnapshotsArgs = {
-  input: SnapshotsInput;
 };
 
 
@@ -1539,13 +1533,6 @@ export type Snapshot = {
   tokenType: Maybe<TokenType>;
 };
 
-export enum SnapshotBlockchain {
-  Base = 'base',
-  Ethereum = 'ethereum',
-  Gold = 'gold',
-  Zora = 'zora'
-}
-
 export type SnapshotFilter = {
   blockNumber: InputMaybe<Range_Comparator_Exp>;
   date: InputMaybe<Date_Range_Comparator_Exp>;
@@ -1554,18 +1541,6 @@ export type SnapshotFilter = {
   tokenAddress: InputMaybe<Address_Comparator_Exp>;
   tokenId: InputMaybe<String_Comparator_Exp>;
   tokenType: InputMaybe<TokenType_Comparator_Exp>;
-};
-
-export type SnapshotsInput = {
-  blockchain: SnapshotBlockchain;
-  cursor: InputMaybe<Scalars['String']['input']>;
-  filter: SnapshotFilter;
-  limit: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type SnapshotsOutput = {
-  Snapshot: Maybe<Array<Snapshot>>;
-  pageInfo: Maybe<PageInfo>;
 };
 
 export type Social = {

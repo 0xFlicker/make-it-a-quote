@@ -25,6 +25,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormatColorTextOutlined from "@mui/icons-material/FormatColorTextOutlined";
 import FormatColorFill from "@mui/icons-material/FormatColorFill";
 import FormatLineSpacing from "@mui/icons-material/FormatLineSpacing";
+import { FileMenu } from "../FileMenu";
 import { FormatPopover } from "./FormatPopover";
 import { ParagraphPopover } from "./ParagraphPopover";
 import { FontPopover } from "./FontPopover";
@@ -43,7 +44,21 @@ const activeButtonStyle = {
 
 export const FormatBar: FC<{
   fabricCanvas: CanvasWithSafeArea | null;
-}> = ({ fabricCanvas }) => {
+  onImport: () => void;
+  onImportEmbed: (embed: string) => void;
+  onImportParentPfp: (parentPfp: string) => void;
+  onDownload: () => void;
+  embeds?: string[];
+  parentPfp?: string;
+}> = ({
+  onImport,
+  onImportEmbed,
+  onImportParentPfp,
+  onDownload,
+  embeds,
+  parentPfp,
+  fabricCanvas,
+}) => {
   const fontButtonRef = useRef<HTMLButtonElement>(null);
   const paragraphStyleButtonRef = useRef<HTMLButtonElement>(null);
   const formatButtonRef = useRef<HTMLButtonElement>(null);
@@ -77,23 +92,26 @@ export const FormatBar: FC<{
     if (fabricCanvas) {
       // get current selection
       const activeObject = fabricCanvas.getActiveObject();
-      console.log(activeObject);
       if (!activeObject) {
         return;
       }
       if (activeObject.type == "i-text") {
         const text = activeObject as IText;
+        let needsUpdate = false;
         if (text.fill !== stroke.fillColor) {
           text.set("fill", stroke.fillColor);
-          fabricCanvas.renderAll();
+          needsUpdate = true;
         }
         if (text.stroke !== stroke.strokeColor) {
           text.set("stroke", stroke.strokeColor);
-          fabricCanvas.renderAll();
+          needsUpdate = true;
         }
         if (text.strokeWidth !== stroke.width) {
           text.set("strokeWidth", stroke.width);
-          fabricCanvas.renderAll();
+          needsUpdate = true;
+        }
+        if (needsUpdate) {
+          fabricCanvas.requestRenderAll();
         }
       }
     }
@@ -130,6 +148,14 @@ export const FormatBar: FC<{
   return (
     <>
       <Toolbar>
+        <FileMenu
+          onImport={onImport}
+          onImportEmbed={onImportEmbed}
+          onImportParentPfp={onImportParentPfp}
+          onDownload={onDownload}
+          embeds={embeds}
+          parentPfp={parentPfp}
+        />
         <Box sx={{ flexGrow: 1 }} />
         <ButtonGroup
           variant="contained"
