@@ -36,7 +36,7 @@ export default function Page() {
       <p>then click &quot;make it a quote&quot;</p>
       <p>
         <a
-          href="https://warpcast.com/~/add-cast-action?url=https://quote.flick.ing/action"
+          href="https://warpcast.com/~/add-cast-action?url=https://quote.flick.ing/action/degen-unlock"
           style={{
             color: "#D6B8FF",
           }}
