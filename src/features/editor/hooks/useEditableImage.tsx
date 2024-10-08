@@ -4,11 +4,13 @@ import { CanvasWithSafeArea } from "../helpers/CanvasWithSafeArea";
 import { FabricImage } from "fabric";
 
 export function useEditableImage({
+  aspectRatio = 1,
   canvas,
   src,
   onLoaded,
   onSelected,
 }: {
+  aspectRatio?: number;
   canvas?: CanvasWithSafeArea | null;
   src?: string;
   onLoaded?: () => void;
@@ -38,9 +40,8 @@ export function useEditableImage({
         canvas.add(editableImage);
         editableImage.setCoords();
         editableImage.setupDragMatrix();
-        const ratio = 1;
-        editableImage.setFixedAspectData(ratio);
-        editableImage.resetToAspectRatio(ratio);
+        editableImage.setFixedAspectData(aspectRatio);
+        editableImage.resetToAspectRatio(aspectRatio);
         editableImage.on("selected", () => {
           onSelected?.();
         });

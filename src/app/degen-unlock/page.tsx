@@ -31,9 +31,12 @@ export default function Page() {
         marginTop: "32px",
       }}
     >
+      <p>to use make it a quote frame:</p>
+      <p>drop quote.flick.ing in the reply to a cast</p>
+      <p>then click &quot;make it a quote&quot;</p>
       <p>
         <a
-          href="https://warpcast.com/~/add-cast-action?url=https://quote.flick.ing/action/degen-unlock"
+          href="https://warpcast.com/~/add-cast-action?url=https://quote.flick.ing/action"
           style={{
             color: "#D6B8FF",
           }}

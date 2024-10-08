@@ -8,6 +8,7 @@ import { useState } from "react";
 
 import type { CanvasContext, CanvasTool, CropState } from "./canvasTool";
 import { canvasToolDefault } from "./canvasTool";
+import { croppingControlSet } from "./crop";
 
 const noop = () => {};
 
@@ -37,7 +38,7 @@ export const DEFAULT_CROP_RENDER_STATE: CropState = {
 
 export const getCropRenderState = (
   zoomValue: number,
-  target: EditableImage
+  target: EditableImage,
 ) => {
   const { cropX, cropY, width, height } = target;
   const dimensions = target.getOriginalSize();
@@ -55,7 +56,7 @@ export const getCropRenderState = (
 export const renderCrop = (
   canvas: CanvasWithSafeArea,
   cropRenderState: CropState = DEFAULT_CROP_RENDER_STATE,
-  localCropState: LocalCropState = DEFAULT_LOCAL_CROP_STATE
+  localCropState: LocalCropState = DEFAULT_LOCAL_CROP_STATE,
 ) => {
   const { cropX, cropY, width, height } = cropRenderState;
   const { ratio } = localCropState;
@@ -88,7 +89,7 @@ export const useCropAndResizeTool = (): CanvasTool => {
   const [zoomValue, setZoomValue] = useState(1);
   const [isDirty, setIsDirty] = useState(false);
   const [enterState, setEnterState] = useState<LocalCropState>(
-    DEFAULT_LOCAL_CROP_STATE
+    DEFAULT_LOCAL_CROP_STATE,
   );
 
   // Not used internally by the tool, for controlling the aspect ratio of the canvas safe area
@@ -105,7 +106,7 @@ export const useCropAndResizeTool = (): CanvasTool => {
 
   const onModifiedHandler = (
     canvas: CanvasWithSafeArea,
-    eventData: any = {}
+    eventData: any = {},
   ) => {
     if (eventData.action === "crop") {
       setIsDirty(true);
@@ -127,7 +128,7 @@ export const useCropAndResizeTool = (): CanvasTool => {
 
   function throttle<Input extends any[], Output extends unknown>(
     fn: (...arg0: Input) => Output,
-    wait: number
+    wait: number,
   ) {
     let time = Date.now();
     return function (...arg0: Input) {
@@ -147,7 +148,7 @@ export const useCropAndResizeTool = (): CanvasTool => {
 
       target?.fire("modified");
     },
-    MOUSE_WHEEL_THROTTLE_AMOUNT
+    MOUSE_WHEEL_THROTTLE_AMOUNT,
   );
 
   const onMouseWheelHandler = (canvas: CanvasWithSafeArea, options: any) => {
@@ -201,7 +202,7 @@ export const useCropAndResizeTool = (): CanvasTool => {
 
       canvas.setActiveObject(target);
 
-      target.controls = fixedAspectRatioCroppingControlSet;
+      target.controls = croppingControlSet;
 
       target.hasControls = true;
       target.hasBorders = true;
@@ -218,7 +219,7 @@ export const useCropAndResizeTool = (): CanvasTool => {
       setAspectRatio({
         ratio: target.fixedAspectRatio,
       });
-      setContentAspectRatioOverride(1);
+      setContentAspectRatioOverride(target.fixedAspectRatio);
 
       const modifiedHandler = (eventData: any) =>
         onModifiedHandler(canvas, eventData);

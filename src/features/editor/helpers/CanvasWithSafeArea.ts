@@ -46,7 +46,7 @@ export class CanvasWithSafeArea extends Canvas {
 
   constructor(
     element: HTMLCanvasElement | string,
-    options?: CanvasWithSafeAreaOptions
+    options?: CanvasWithSafeAreaOptions,
   ) {
     super(element, options);
     // default contentSize. developer needs to specify the real one.
@@ -90,7 +90,7 @@ export class CanvasWithSafeArea extends Canvas {
     // First check if the EditableImage is a direct child
     const objects = this.getObjects();
     const editableImage = objects.find(
-      (object) => object instanceof EditableImage
+      (object) => object instanceof EditableImage,
     ) as EditableImage | undefined;
     if (editableImage) {
       return editableImage;
@@ -98,11 +98,11 @@ export class CanvasWithSafeArea extends Canvas {
 
     // check groups
     const groups = objects.filter(
-      (object) => object.type === "group"
+      (object) => object.type === "group",
     ) as Group[];
     for (const group of groups) {
       const editableImage = group._objects.find(
-        (object) => object instanceof EditableImage
+        (object) => object instanceof EditableImage,
       ) as EditableImage | undefined;
       if (editableImage) {
         return editableImage;

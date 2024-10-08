@@ -30,7 +30,7 @@
     "react-color": "^2.19.3",
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",
-    "viem": "^2.18.7"
+    "viem": "^2.21.19"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",

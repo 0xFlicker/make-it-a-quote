@@ -357,6 +357,7 @@ export const Content: FC<Props> = ({
     reset();
   }, [reset]);
   useEditableImage({
+    aspectRatio,
     canvas: state.fabricCanvas,
     src: fileUrl,
     onLoaded,

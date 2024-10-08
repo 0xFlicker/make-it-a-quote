@@ -13,7 +13,7 @@ export function renderCropCorner(
   left: number,
   top: number,
   _: any,
-  fabricObject: any
+  fabricObject: any,
 ) {
   const cSize = 14;
 
@@ -36,7 +36,7 @@ export function renderCropMiddle(
   left: number,
   top: number,
   _: any,
-  fabricObject: any
+  fabricObject: any,
 ) {
   const cSize = 14;
   const cSizeBy2 = cSize / 2;
@@ -59,15 +59,15 @@ export const cropFromLeft: TransformActionHandler = (_, transform, x, y) => {
   const { safeArea } = t.target.canvas;
   let newX = x;
   const pointInCanvasCoords = new Point(x, y).transform(
-    t.target.canvas.viewportTransform
+    t.target.canvas.viewportTransform,
   );
 
   // this ensures that the crop handle does not extend beyond the safe area on the left side.
-  if (pointInCanvasCoords.x < safeArea.x) {
-    newX = new Point(safeArea.x, 0).transform(
-      util.invertTransform(t.target.canvas.viewportTransform)
-    ).x;
-  }
+  // if (pointInCanvasCoords.x < safeArea.x) {
+  //   newX = new Point(safeArea.x, 0).transform(
+  //     util.invertTransform(t.target.canvas.viewportTransform)
+  //   ).x;
+  // }
 
   const anchorPoint = "right";
   const { width } = t.target;
@@ -76,12 +76,12 @@ export const cropFromLeft: TransformActionHandler = (_, transform, x, y) => {
   const newLeft = t.target.toLocalPoint(
     new Point(newX, y),
     t.originX,
-    t.originY
+    t.originY,
   );
   const constraint = t.target.translateToOriginPoint(
     centerPoint,
     anchorPoint,
-    t.originY
+    t.originY,
   );
   const cropMinX = cropMinSize;
 
@@ -113,22 +113,22 @@ export const cropFromRight: TransformActionHandler = (
   eventData,
   transform,
   x,
-  y
+  y,
 ) => {
   const t = transform;
   const { safeArea } = t.target.canvas;
   let newX = x;
 
   const pointInCanvasCoords = new Point(x, y).transform(
-    t.target.canvas.viewportTransform
+    t.target.canvas.viewportTransform,
   );
 
   // this ensures that the crop handle does not extend beyond the safe area on the right side.
-  if (pointInCanvasCoords.x > safeArea.x + safeArea.width) {
-    newX = new Point(safeArea.x + safeArea.width, 0).transform(
-      util.invertTransform(t.target.canvas.viewportTransform)
-    ).x;
-  }
+  // if (pointInCanvasCoords.x > safeArea.x + safeArea.width) {
+  //   newX = new Point(safeArea.x + safeArea.width, 0).transform(
+  //     util.invertTransform(t.target.canvas.viewportTransform)
+  //   ).x;
+  // }
 
   const anchorPoint = "left";
   const { width } = t.target;
@@ -138,12 +138,12 @@ export const cropFromRight: TransformActionHandler = (
   const newRight = t.target.toLocalPoint(
     new Point(newX, y),
     t.originX,
-    t.originY
+    t.originY,
   );
   const constraint = t.target.translateToOriginPoint(
     centerPoint,
     anchorPoint,
-    t.originY
+    t.originY,
   );
   const cropMinX = cropMinSize;
 
@@ -169,22 +169,22 @@ export const cropFromTop: TransformActionHandler = (
   eventData,
   transform,
   x,
-  y
+  y,
 ) => {
   const t = transform;
   const { safeArea } = t.target.canvas;
   let newY = y;
 
   const pointInCanvasCoords = new Point(x, y).transform(
-    t.target.canvas.viewportTransform
+    t.target.canvas.viewportTransform,
   );
 
   // this ensures that the crop handle does not extend beyond the safe area on the top side.
-  if (pointInCanvasCoords.y < safeArea.y) {
-    newY = new Point(0, safeArea.y).transform(
-      util.invertTransform(t.target.canvas.viewportTransform)
-    ).y;
-  }
+  // if (pointInCanvasCoords.y < safeArea.y) {
+  //   newY = new Point(0, safeArea.y).transform(
+  //     util.invertTransform(t.target.canvas.viewportTransform)
+  //   ).y;
+  // }
 
   const anchorPoint = "bottom";
   const { height } = t.target;
@@ -193,12 +193,12 @@ export const cropFromTop: TransformActionHandler = (
   const newTop = t.target.toLocalPoint(
     new Point(x, newY),
     t.originX,
-    t.originY
+    t.originY,
   );
   const constraint = t.target.translateToOriginPoint(
     centerPoint,
     t.originX,
-    anchorPoint
+    anchorPoint,
   );
   const cropMinY = cropMinSize;
 
@@ -230,22 +230,22 @@ export const cropFromBottom: TransformActionHandler = (
   eventData,
   transform,
   x,
-  y
+  y,
 ) => {
   const t = transform;
   const { safeArea } = t.target.canvas;
   let newY = y;
 
   const pointInCanvasCoords = new Point(x, y).transform(
-    t.target.canvas.viewportTransform
+    t.target.canvas.viewportTransform,
   );
 
   // this ensures that the crop handle does not extend beyond the safe area on the bottom side.
-  if (pointInCanvasCoords.y > safeArea.y + safeArea.height) {
-    newY = new Point(0, safeArea.y + safeArea.height).transform(
-      util.invertTransform(t.target.canvas.viewportTransform)
-    ).y;
-  }
+  // if (pointInCanvasCoords.y > safeArea.y + safeArea.height) {
+  //   newY = new Point(0, safeArea.y + safeArea.height).transform(
+  //     util.invertTransform(t.target.canvas.viewportTransform)
+  //   ).y;
+  // }
 
   const anchorPoint = "top";
   const { height } = t.target;
@@ -255,12 +255,12 @@ export const cropFromBottom: TransformActionHandler = (
   const newBottom = t.target.toLocalPoint(
     new Point(x, newY),
     t.originX,
-    t.originY
+    t.originY,
   );
   const constraint = t.target.translateToOriginPoint(
     centerPoint,
     t.originX,
-    anchorPoint
+    anchorPoint,
   );
   const cropMinY = cropMinSize;
 
@@ -286,7 +286,7 @@ export function cropFromTopLeft(
   eventData: any,
   transform: any,
   x: number,
-  y: number
+  y: number,
 ) {
   const left = cropFromLeft(eventData, transform, x, y);
   const top = cropFromTop(eventData, transform, x, y);
@@ -298,7 +298,7 @@ export function cropFromBottomRight(
   eventData: any,
   transform: any,
   x: number,
-  y: number
+  y: number,
 ) {
   const right = cropFromRight(eventData, transform, x, y);
   const bottom = cropFromBottom(eventData, transform, x, y);
@@ -310,7 +310,7 @@ export function cropFromBottomLeft(
   eventData: any,
   transform: any,
   x: number,
-  y: number
+  y: number,
 ) {
   const left = cropFromLeft(eventData, transform, x, y);
   const bottom = cropFromBottom(eventData, transform, x, y);
@@ -322,7 +322,7 @@ export function cropFromTopRight(
   eventData: any,
   transform: any,
   x: number,
-  y: number
+  y: number,
 ) {
   const right = cropFromRight(eventData, transform, x, y);
   const top = cropFromTop(eventData, transform, x, y);

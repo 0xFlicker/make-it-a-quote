@@ -28,6 +28,9 @@ export const ImageBar: FC<{
         onImportParentPfp={onImportParentPfp}
         embeds={embeds}
         parentPfp={parentPfp}
+        onDownload={() => {
+          throw new Error("Not implemented");
+        }}
       />
       <Box sx={{ flexGrow: 1 }} />
       <ZOrderButtonGroup fabricCanvas={fabricCanvas} />

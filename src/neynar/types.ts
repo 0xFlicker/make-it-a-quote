@@ -2,33 +2,33 @@ export interface HttpResult<T> {
   result: T;
 }
 
-type Result<N extends string | number | symbol, T> = {
+export type Result<N extends string | number | symbol, T> = {
   [key in N]: T;
 };
 
 export interface UserInfo {
   fid: number;
-  custodyAddress: string;
+  custody_address: string;
   username: string;
-  displayName: string;
+  display_name: string;
   pfp: {
     url: string;
   };
   profile: {
     bio: {
       text: string;
-      mentionedProfiles: string[];
+      mentioned_profiles: string[];
     };
   };
-  followerCount: number;
-  followingCount: number;
+  follower_count: number;
+  following_count: number;
   verifications: string[];
-  verifiedAddresses: {
+  verified_addresses: {
     eth_addresses: `0x${string}`[];
     sol_addresses: string[];
   };
-  activeStatus: boolean;
-  viewerContext: {
+  active_status: boolean;
+  viewer_context: {
     following: boolean;
     follower: boolean;
   };

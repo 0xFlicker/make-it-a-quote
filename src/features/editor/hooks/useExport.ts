@@ -50,17 +50,8 @@ export function useExport({
       (obj: Object) => obj.type !== "PfpCircle",
     );
     await exportCanvas.loadFromJSON(object);
-    console.log({
-      exportWidth,
-      exportHeight,
-      safeWidth: fabricCanvas.safeArea.width,
-      safeHeight: fabricCanvas.safeArea.height,
-    });
-    const vpt = fabricCanvas.viewportTransform;
-    exportCanvas.viewportTransform = vpt;
-    // Scale the export canvas to the correct size
+    exportCanvas.viewportTransform = fabricCanvas.viewportTransform;
     exportCanvas.setZoom(fabricCanvas.getZoom() * scaleFactor);
-    console.log("Current zoom:", fabricCanvas.getZoom());
     exportCanvas.relativePan(
       new Point(
         -fabricCanvas.safeArea.x * scaleFactor,

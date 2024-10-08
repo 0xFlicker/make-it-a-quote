@@ -75,6 +75,7 @@ export const PfpCanvas: FC<{
         alignItems: "center",
         height,
         width,
+        backgroundImage: "url(/transparency.jpg)",
         // maxWidth: `calc(100% - ${2 * 16}px)`,
         // [theme.breakpoints.up("sm")]: {
         //   width: "calc(300px * var(--aspect-ratio))", // Example for extra small screens
