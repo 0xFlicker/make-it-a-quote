@@ -70,18 +70,6 @@ export async function GET(
 
   ctx.drawImage(pfpImage, sx, sy, sWidth, sHeight, 0, 0, 576, 576); // Draw the image with 1:1 aspect ratio
 
-  // use black text to draw the rank inside the badge
-  const rankText = `#${rank}`;
-  ctx.fillStyle = "black";
-  ctx.font = `${rankText.length < 3 ? 28 : 28 - Math.min((rankText.length - 3) * 4, 20)}px Roboto`;
-
-  const rankTextDimensions = ctx.measureText(rankText);
-  ctx.fillText(
-    rankText,
-    16 + 96 / 2 - rankTextDimensions.width / 2,
-    576 + rankTextDimensions.actualBoundingBoxAscent / 2 - 96 / 2 - 16,
-  );
-
   // Create gradient
   const grd = ctx.createLinearGradient(0, 576 / 2, 576, 576 / 2);
   grd.addColorStop(0, "rgba(255, 255, 255, 1)");
