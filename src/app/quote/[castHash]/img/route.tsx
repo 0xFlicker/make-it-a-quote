@@ -37,10 +37,13 @@ export async function GET(
   { params }: { params: { castHash: string } },
 ) {
   await promiseFonts;
-  const { cast } = await fetchCast({
+
+  const response = await fetchCast({
     identifier: params.castHash,
     type: "hash",
   });
+
+  const { cast } = response;
 
   const imagePfp = cast.author?.pfp_url;
   const text = cast.text;
@@ -67,9 +70,6 @@ export async function GET(
 
   ctx.drawImage(pfpImage, sx, sy, sWidth, sHeight, 0, 0, 576, 576); // Draw the image with 1:1 aspect ratio
 
-  // Now draw a badge in lower left with SCS score
-  const badgeImage = await Canvas.loadImage(`${baseUrl}/badge.png`);
-  ctx.drawImage(badgeImage, 16, 576 - 96 - 16, 96, 96);
   // use black text to draw the rank inside the badge
   const rankText = `#${rank}`;
   ctx.fillStyle = "black";
@@ -81,12 +81,6 @@ export async function GET(
     16 + 96 / 2 - rankTextDimensions.width / 2,
     576 + rankTextDimensions.actualBoundingBoxAscent / 2 - 96 / 2 - 16,
   );
-
-  // Write "FarRank" above the badge, centered
-  ctx.fillStyle = "black";
-  ctx.font = "24px Roboto";
-  ctx.textAlign = "center";
-  ctx.fillText("FarRank", 16 + 96 / 2, 576 - 96 - 16 - 8);
 
   // Create gradient
   const grd = ctx.createLinearGradient(0, 576 / 2, 576, 576 / 2);
