@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "generate": "graphql-codegen",
-    "prestart": "yarn generate",
-    "predev": "yarn generate",
+    "#generate": "graphql-codegen",
+    "#prestart": "yarn generate",
+    "#predev": "yarn generate",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

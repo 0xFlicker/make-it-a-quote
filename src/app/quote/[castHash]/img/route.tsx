@@ -31,49 +31,6 @@ const promiseFonts = fetch(`${baseUrl}/fonts/Roboto-Medium.ttf`)
   .catch((error) => {
     console.error("Failed to load font", error);
   });
-const socialCapitalQuery = /* GraphQL */ `
-  query SocialCapital($identity: Identity!, $castHash: String!) {
-    Socials(
-      input: {
-        filter: { dappName: { _eq: farcaster }, identity: { _eq: $identity } }
-        blockchain: ethereum
-      }
-    ) {
-      Social {
-        farcasterScore {
-          farRank
-        }
-      }
-    }
-    FarcasterCasts(
-      input: { filter: { hash: { _eq: $castHash } }, blockchain: ALL }
-    ) {
-      Cast {
-        moxieEarningsSplit {
-          earnerType
-          earningsAmount
-          earningsAmountInWei
-        }
-      }
-    }
-    FarcasterReplies(
-      input: { filter: { hash: { _eq: $castHash } }, blockchain: ALL }
-    ) {
-      Reply {
-        moxieEarningsSplit {
-          earnerType
-          earningsAmount
-          earningsAmountInWei
-        }
-      }
-    }
-  }
-`;
-
-interface SocialCapitalQueryResponse {
-  data: SocialCapitalQuery | null;
-  error: Error | null;
-}
 
 export async function GET(
   req: NextRequest,
@@ -85,63 +42,13 @@ export async function GET(
     type: "hash",
   });
 
-  const { data, error }: SocialCapitalQueryResponse = await fetchQuery(
-    socialCapitalQuery,
-    {
-      identity: `fc_fid:${cast.author?.fid}`,
-      castHash: params.castHash,
-    } as SocialCapitalQueryVariables,
-  );
-
   const imagePfp = cast.author?.pfp_url;
   const text = cast.text;
   const name = cast.author?.username;
 
   let rank: number | null = null;
   let moxieAmount: number | null = null;
-  if (!error && data) {
-    if (Number(data.Socials?.Social?.length) > 1) {
-      console.warn(
-        `More than one social capital found for ${cast.parent_url}`,
-        data.Socials,
-      );
-    }
-    const farRank = Number(data.Socials?.Social?.[0]?.farcasterScore?.farRank);
-    if (Number(data.Socials?.Social?.length) > 0 && !Number.isNaN(farRank)) {
-      rank = farRank;
-    }
-    if (
-      Number(data.FarcasterCasts?.Cast?.length) > 1 ||
-      Number(data.FarcasterReplies?.Reply?.length) > 1
-    ) {
-      console.warn(
-        `More than one social capital found for ${cast.parent_url}`,
-        data.FarcasterCasts,
-        data.FarcasterReplies,
-      );
-    }
-    const replyOrCast =
-      data.FarcasterReplies?.Reply?.[0] ?? data.FarcasterCasts?.Cast?.[0];
 
-    if (replyOrCast?.moxieEarningsSplit) {
-      const castScore = replyOrCast?.moxieEarningsSplit?.reduce(
-        (acc, result) => {
-          if (result) {
-            const { earningsAmountInWei } = result;
-            if (earningsAmountInWei) {
-              return acc + BigInt(earningsAmountInWei);
-            }
-          }
-          return acc;
-        },
-        0n,
-      );
-      moxieAmount = Number(formatEther(castScore));
-    }
-  }
-  if (error) {
-    console.error(error);
-  }
   const canvas = Canvas.createCanvas(576, 576);
 
   const ctx = canvas.getContext("2d");
@@ -210,13 +117,7 @@ export async function GET(
   fontSize = Math.max(fontSize, 10);
 
   let signOff = `@${name}`;
-  let moxieAmountString = "";
-  if (moxieAmount != null && moxieAmount > 0) {
-    // if moxieAmount is > 1, then trim the decimal places, other wise show 2 decimal places
-    moxieAmountString =
-      moxieAmount > 1 ? moxieAmount.toFixed(0) : moxieAmount.toFixed(2);
-    // signOff = `@${name} | ${moxieAmountString} Ⓜ️`;
-  }
+
   return new ImageResponse(
     (
       <div
@@ -250,18 +151,6 @@ export async function GET(
               height: "100%",
             }}
           >
-            {moxieAmountString && (
-              <p
-                style={{
-                  alignSelf: "flex-end",
-                  justifySelf: "flex-start",
-                  textAlign: "right",
-                  fontSize: "24px",
-                  // light purple
-                  color: "#D6B8FF",
-                }}
-              >{`${moxieAmountString} Ⓜ️`}</p>
-            )}
             <div
               style={{
                 display: "flex",
