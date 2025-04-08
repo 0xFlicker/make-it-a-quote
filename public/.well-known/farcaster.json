@@ -1,8 +1,8 @@
 {
   "accountAssociation": {
-    "header": "eyJmaWQiOjYwOTcsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHhmODE3MDUxN2YxNTc2ZWVhYjQ5MGE2N2M5Njg5NzdhYmQ3NWU3MGRhIn0",
+    "header": "eyJmaWQiOjYwOTcsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHhGODE3MDUxN2YxNTc2RUVBQjQ5MGE2N0M5Njg5NzdhQmQ3NWU3MGRBIn0",
     "payload": "eyJkb21haW4iOiJxdW90ZS5mbGljay5pbmcifQ",
-    "signature": ""
+    "signature": "MHg2YjczOGJmZDM2ZjY4Y2IwNzA3M2Q1ZTA0MTkyODk2NzE3MDAwZGQzY2ZjNjA3MmM4N2RkODE2OTgwNGZjMTJlMWZmN2EzYjI1N2U0NTg2YTg4MmU1Zjk2YjM0YWFkZjdlMWQ5OTI0MjQzMGJlNjk4ZDIzNDBiN2EyZDAwNDI1NDFi"
   },
   "frame": {
     "name": "flicking",
