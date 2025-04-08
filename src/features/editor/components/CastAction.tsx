@@ -3,6 +3,7 @@ import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
+import { sdk } from "@farcaster/frame-sdk";
 import { PfpCanvas } from "./PfpCanvas";
 import SendIcon from "@mui/icons-material/Send";
 import DocumentIcon from "@mui/icons-material/Download";
@@ -22,12 +23,14 @@ interface CastActionProps {
   imageUrl: string;
   aspectRatio?: number;
   castId?: `0x${string}`;
+  follows?: boolean;
 }
 
 export const CastAction: FC<CastActionProps> = ({
   imageUrl,
   aspectRatio = 1,
   castId,
+  follows,
 }) => {
   const [fabricCanvas, setFabricCanvas] = useState<CanvasWithSafeArea | null>(
     null,
@@ -52,10 +55,19 @@ export const CastAction: FC<CastActionProps> = ({
   });
 
   // Setup cast functionality
-  const doCast = useCast({
-    fabricCanvas,
-    castId,
-  });
+  const doCast = useCallback(async () => {
+    await sdk.actions.composeCast({
+      text: "",
+      embeds: [imageUrl],
+    });
+  }, [imageUrl]);
+
+  const doFrameCast = useCallback(async () => {
+    await sdk.actions.composeCast({
+      // `${follows ? "" : "Follow @flick to remove this message\n"}
+      text: `https://quote.flick.ing/cast/${castId}`,
+    });
+  }, [castId]);
 
   // Setup download functionality (for FormatBar)
   const download = useExport({
@@ -111,6 +123,10 @@ export const CastAction: FC<CastActionProps> = ({
           onChange={(_, newValue: number) => {
             switch (newValue) {
               case 0: {
+                doFrameCast();
+                break;
+              }
+              case 1: {
                 doCast();
                 break;
               }
@@ -120,7 +136,8 @@ export const CastAction: FC<CastActionProps> = ({
             }
           }}
         >
-          <BottomNavigationAction label="Cast" icon={<SendIcon />} />
+          <BottomNavigationAction label="Cast Frame" icon={<DocumentIcon />} />
+          <BottomNavigationAction label="Cast Image" icon={<SendIcon />} />
         </BottomNavigation>
       </Box>
     </FormatsProvider>

@@ -6,12 +6,16 @@ import { Skeleton } from "./skeleton";
 import { baseUrl } from "@/config";
 export const Client: FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [castId, setCastId] = useState<`0x${string}` | undefined>(undefined);
   useEffect(() => {
     sdk.actions
       .ready()
       .then(async () => {
         console.log("frame ready");
-        const { location } = await sdk.context;
+        const {
+          location,
+          user: { fid },
+        } = await sdk.context;
         switch (location?.type) {
           case "cast_embed": {
             const { hash } = location.cast;
@@ -20,6 +24,9 @@ export const Client: FC = () => {
               baseUrl,
             ).toString();
             setImageUrl(url);
+            if (hash) {
+              setCastId(hash as `0x${string}`);
+            }
             break;
           }
         }
@@ -29,7 +36,7 @@ export const Client: FC = () => {
       });
   }, []);
   return imageUrl ? (
-    <CastAction aspectRatio={11 / 9} imageUrl={imageUrl} />
+    <CastAction aspectRatio={11 / 9} imageUrl={imageUrl} castId={castId} />
   ) : (
     <Skeleton />
   );
