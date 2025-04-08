@@ -1,0 +1,18 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjYwOTcsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHhmODE3MDUxN2YxNTc2ZWVhYjQ5MGE2N2M5Njg5NzdhYmQ3NWU3MGRhIn0",
+    "payload": "eyJkb21haW4iOiJxdW90ZS5mbGljay5pbmcifQ",
+    "signature": ""
+  },
+  "frame": {
+    "name": "flicking",
+    "version": "1",
+    "iconUrl": "https://quote.flick.ing/flick.png",
+    "homeUrl": "https://quote.flick.ing",
+    "imageUrl": "https://quote.flick.ing/flick-full.png",
+    "buttonTitle": "make it a quote",
+    "splashImageUrl": "https://quote.flick.ing/flick.png",
+    "splashBackgroundColor": "#3D1A66",
+    "webhookUrl": "https://quote.flick.ing/api/webhook"
+  }
+}
