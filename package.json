@@ -17,6 +17,7 @@
     "@aws-sdk/client-s3": "^3.627.0",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
+    "@farcaster/frame-sdk": "^0.0.34",
     "@mui/icons-material": "^5.16.6",
     "@mui/material": "^5.16.6",
     "@vercel/og": "^0.6.2",
