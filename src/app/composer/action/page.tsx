@@ -10,7 +10,7 @@ const frame = {
     title: "Make it a quote",
     action: {
       type: "launch_frame",
-      url: "https://quote.flick.ing/compose/action",
+      url: "https://quote.flick.ing/composer/action",
       name: "Make it a quote",
       splashImageUrl: "https://quote.flick.ing/flick.png",
       splashBackgroundColor: "#3D1A66",
