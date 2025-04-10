@@ -40,11 +40,11 @@ export async function generateMetadata({
   };
 }
 
-const MainPage = async () => {
+const MainPage = async ({ params }: { params: { castId: string } }) => {
   return (
     <>
       <DefaultProvider>
-        <Client />
+        <Client castId={params.castId} />
       </DefaultProvider>
     </>
   );
