@@ -9,6 +9,7 @@ export const GET = async (req: NextRequest) => {
       type: "post",
     },
     icon: "image",
+    imageUrl: `${baseUrl}/flick-full.png`,
     name: "flicking",
     aboutUrl: `${baseUrl}`,
     description: "flicking memes",

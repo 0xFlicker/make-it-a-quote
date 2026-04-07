@@ -1,10 +1,9 @@
 import { baseUrl } from "@/config";
-import { ActionMetadata } from "frames.js";
 import { NextRequest, NextResponse } from "next/server";
 import { frames } from "../frames/frames";
 
 export const GET = async (req: NextRequest) => {
-  const actionMetadata: ActionMetadata = {
+  const actionMetadata = {
     action: {
       type: "post",
     },
