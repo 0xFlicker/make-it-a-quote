@@ -1,5 +1,4 @@
 import { baseUrl } from "@/config";
-import { fetchMetadata } from "frames.js/next";
 import { Metadata } from "next";
 
 export async function generateMetadata({
@@ -16,7 +15,6 @@ export async function generateMetadata({
         },
       ],
     },
-    other: await fetchMetadata(new URL(`/frames/${castHash}`, baseUrl)),
   };
 }
 
@@ -25,7 +23,6 @@ export default function Page({
 }: {
   params: { castHash: `0x${string}` };
 }) {
-  // return a fullscreen image filling the width of the window
   const ogUrl = new URL(`${baseUrl}/quote/${castHash}/img`, baseUrl).toString();
   return (
     <div

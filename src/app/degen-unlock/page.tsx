@@ -1,5 +1,4 @@
 import { baseUrl } from "@/config";
-import { fetchMetadata } from "frames.js/next";
 import { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -15,7 +14,6 @@ export async function generateMetadata(): Promise<Metadata> {
         },
       ],
     },
-    other: await fetchMetadata(new URL("/frames/degen-unlock", baseUrl)),
   };
 }
 
@@ -31,23 +29,11 @@ export default function Page() {
         marginTop: "32px",
       }}
     >
-      <p>to use make it a quote frame:</p>
-      <p>drop quote.flick.ing in the reply to a cast</p>
-      <p>then click &quot;make it a quote&quot;</p>
-      <p>
-        <a
-          href="https://warpcast.com/~/add-cast-action?url=https://quote.flick.ing/action/degen-unlock"
-          style={{
-            color: "#D6B8FF",
-          }}
-        >
-          install as an action
-        </a>
-      </p>
+      <p>$DEGEN unlock checker</p>
       <p>
         created by:{" "}
         <a
-          href="https://warpscast.com/flick"
+          href="https://farcaster.com/flick"
           style={{
             color: "#D6B8FF",
           }}

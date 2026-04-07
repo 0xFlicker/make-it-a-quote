@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     } else {
       try {
         const url = new URL(trimmed);
-        if (url.hostname !== "warpcast.com") {
+        if (url.hostname !== "farcaster.com") {
           // Try to extract hash from non-warpcast URL
           identifier = url.pathname.split("/").pop()!;
           type = "hash";

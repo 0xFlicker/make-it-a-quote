@@ -1,14 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
-import "@/graphql/airstack";
-import { formatEther } from "viem";
 import { NextRequest, NextResponse } from "next/server";
 import { ImageResponse } from "@vercel/og";
 import { fetchCast } from "@/neynar/cast";
-import { fetchQuery } from "@airstack/node";
-import {
-  SocialCapitalQuery,
-  SocialCapitalQueryVariables,
-} from "@/graphql/types";
 import { createCanvas, loadImage, GlobalFonts } from "@napi-rs/canvas";
 import { baseUrl } from "@/config";
 

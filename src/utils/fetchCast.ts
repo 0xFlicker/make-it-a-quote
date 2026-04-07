@@ -11,7 +11,7 @@ export async function fetchCast(inputText: string) {
       type = "hash";
     } else {
       const url = new URL(inputText);
-      if (url.hostname !== "warpcast.com") {
+      if (url.hostname !== "farcaster.com") {
         identifier = url.pathname.split("/").pop()!;
         type = "hash";
       } else {

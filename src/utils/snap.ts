@@ -113,7 +113,7 @@ export function snapInputPage(baseUrl: string) {
           props: {
             name: "cast",
             label: "Cast URL or hash",
-            placeholder: "https://warpcast.com/... or 0x...",
+            placeholder: "https://farcaster.com/... or 0x...",
             maxLength: 280,
           },
         },

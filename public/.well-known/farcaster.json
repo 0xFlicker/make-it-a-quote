@@ -3,16 +3,5 @@
     "header": "eyJmaWQiOjYwOTcsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHhGODE3MDUxN2YxNTc2RUVBQjQ5MGE2N0M5Njg5NzdhQmQ3NWU3MGRBIn0",
     "payload": "eyJkb21haW4iOiJxdW90ZS5mbGljay5pbmcifQ",
     "signature": "MHg2YjczOGJmZDM2ZjY4Y2IwNzA3M2Q1ZTA0MTkyODk2NzE3MDAwZGQzY2ZjNjA3MmM4N2RkODE2OTgwNGZjMTJlMWZmN2EzYjI1N2U0NTg2YTg4MmU1Zjk2YjM0YWFkZjdlMWQ5OTI0MjQzMGJlNjk4ZDIzNDBiN2EyZDAwNDI1NDFi"
-  },
-  "frame": {
-    "name": "flicking",
-    "version": "1",
-    "iconUrl": "https://quote.flick.ing/flick.png",
-    "homeUrl": "https://quote.flick.ing",
-    "imageUrl": "https://quote.flick.ing/flick-full.png",
-    "buttonTitle": "make it a quote",
-    "splashImageUrl": "https://quote.flick.ing/flick.png",
-    "splashBackgroundColor": "#3D1A66",
-    "webhookUrl": "https://quote.flick.ing/api/webhook"
   }
 }
