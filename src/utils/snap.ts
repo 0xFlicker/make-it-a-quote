@@ -25,9 +25,11 @@ export function snapQuotePage({
   const imageUrl = `${baseUrl}/quote/${castHash}/img`;
   const quoteUrl = `${baseUrl}/quote/${castHash}`;
 
-  // Truncate text for the snap text component (max 320 chars)
+  // Snap text limit is 320 chars; account for `"..."` + ` — @username`
+  const overhead = 6 + username.length;
+  const maxText = 320 - overhead;
   const preview =
-    text.length > 280 ? text.substring(0, 277) + "..." : text;
+    text.length > maxText ? text.substring(0, maxText - 3) + "..." : text;
 
   return snapResponse({
     version: "1.0",
