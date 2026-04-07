@@ -9,24 +9,14 @@ import {
   SocialCapitalQuery,
   SocialCapitalQueryVariables,
 } from "@/graphql/types";
-import path from "path";
-import { tmpdir } from "os";
-import { promises as fs } from "fs";
-import Canvas, { deregisterAllFonts, registerFont } from "canvas";
+import { createCanvas, loadImage, GlobalFonts } from "@napi-rs/canvas";
 import { baseUrl } from "@/config";
 
 // load font from baseUrl/fonts/Roboto-Medium.ttf
 const promiseFonts = fetch(`${baseUrl}/fonts/Roboto-Medium.ttf`)
   .then(async (response) => {
     const data = await response.arrayBuffer();
-    await fs.writeFile(
-      path.join(tmpdir(), "Roboto-Medium.ttf"),
-      Buffer.from(data),
-    );
-    deregisterAllFonts();
-    registerFont(path.join(tmpdir(), "Roboto-Medium.ttf"), {
-      family: "Roboto",
-    });
+    GlobalFonts.register(Buffer.from(data), "Roboto");
   })
   .catch((error) => {
     console.error("Failed to load font", error);
@@ -49,13 +39,10 @@ export async function GET(
   const text = cast.text;
   const name = cast.author?.username;
 
-  let rank: number | null = null;
-  let moxieAmount: number | null = null;
-
-  const canvas = Canvas.createCanvas(576, 576);
+  const canvas = createCanvas(576, 576);
 
   const ctx = canvas.getContext("2d");
-  const pfpImage = await Canvas.loadImage(imagePfp);
+  const pfpImage = await loadImage(imagePfp);
 
   const sx =
     pfpImage.width > pfpImage.height

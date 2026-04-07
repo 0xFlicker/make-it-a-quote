@@ -1,10 +1,10 @@
-import Canvas from "canvas";
+import { createCanvas, loadImage } from "@napi-rs/canvas";
 
 export async function canvasPfp(url: string) {
-  const canvas = Canvas.createCanvas(576, 576);
+  const canvas = createCanvas(576, 576);
 
   const ctx = canvas.getContext("2d");
-  const pfpImage = await Canvas.loadImage(url);
+  const pfpImage = await loadImage(url);
 
   const sx =
     pfpImage.width > pfpImage.height
