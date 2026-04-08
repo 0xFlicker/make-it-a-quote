@@ -3,42 +3,28 @@ import { baseUrl } from "@/config";
 import { fetchCast } from "@/neynar/cast";
 import { snapInputPage, snapQuotePage, snapErrorPage } from "@/utils/snap";
 
-// Decode JFS compact string → payload object
-// JFS format: BASE64URL(header) . BASE64URL(payload) . BASE64URL(signature)
-function decodeJfsPayload(jfs: string): Record<string, unknown> | null {
-  try {
-    const parts = jfs.split(".");
-    if (parts.length !== 3) return null;
-    const payload = Buffer.from(parts[1], "base64url").toString("utf-8");
-    return JSON.parse(payload);
-  } catch {
-    return null;
-  }
-}
-
-// Extract inputs from either raw JSON body or JFS-signed body
+// Extract inputs from the POST body.
+// Farcaster sends: { header: "base64url", payload: "base64url", signature: "base64url" }
+// Direct curl/dev: { inputs: {...} } or { fid, inputs, button_index, timestamp }
 function extractInputsFromText(
   text: string,
 ): Record<string, unknown> {
-  // Try raw JSON first (e.g. local dev / curl / Farcaster proxy)
   try {
     const json = JSON.parse(text);
-    if (typeof json === "object" && json !== null) {
-      // Direct: { inputs: {...} }
-      if (json.inputs) return json.inputs;
-      // Farcaster proxy wraps: { payload: { inputs: {...} } }
-      if (json.payload?.inputs) return json.payload.inputs;
+    if (typeof json !== "object" || json === null) return {};
+
+    // Direct JSON: { inputs: {...} }
+    if (json.inputs) return json.inputs;
+
+    // JFS as JSON object: { header, payload, signature }
+    if (json.payload && typeof json.payload === "string") {
+      const decoded = JSON.parse(
+        Buffer.from(json.payload, "base64url").toString("utf-8"),
+      );
+      if (decoded.inputs) return decoded.inputs;
     }
   } catch {
-    // not JSON
-  }
-
-  // Try JFS (signed payload from Farcaster clients)
-  // Body could be the raw JFS string or a JSON-encoded JFS string
-  const jfsString = text.startsWith('"') ? JSON.parse(text) : text;
-  const payload = decodeJfsPayload(jfsString);
-  if (payload?.inputs && typeof payload.inputs === "object") {
-    return payload.inputs as Record<string, unknown>;
+    // ignore
   }
 
   return {};
@@ -53,15 +39,6 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const rawBody = await req.text();
-
-    // Return debug info as the error message so we can see it in the emulator
-    if (!extractInputsFromText(rawBody).cast) {
-      return snapErrorPage(
-        `Debug: body length=${rawBody.length}, starts=${rawBody.substring(0, 80)}, ct=${req.headers.get("content-type")}`,
-        baseUrl,
-      );
-    }
-
     const inputs = extractInputsFromText(rawBody);
     const castInput = typeof inputs.cast === "string" ? inputs.cast : "";
 
