@@ -1,6 +1,6 @@
 {
   "name": "make-it-a-quote",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,36 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.627.0",
-    "@emotion/react": "^11.13.0",
-    "@emotion/styled": "^11.13.0",
-    "@mui/icons-material": "^5.16.6",
-    "@mui/material": "^5.16.6",
     "@napi-rs/canvas": "^0.1.97",
     "@vercel/og": "^0.6.2",
-    "fabric": "^6.0.2",
-    "nanoid": "^5.0.7",
     "next": "14.2.3",
     "react": "^18",
-    "react-color": "^2.19.3",
-    "react-dom": "^18",
-    "react-dropzone": "^14.2.3",
-    "viem": "^2.21.19"
+    "react-dom": "^18"
   },
   "devDependencies": {
-    "@parcel/watcher": "^2.4.1",
     "@types/node": "^20",
     "@types/react": "^18",
-    "@types/react-color": "^3.0.12",
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
-    "postcss": "^8",
-    "prettier": "^3.2.5",
-    "tailwindcss": "^3.4.1",
     "typescript": "^5"
-  },
-  "resolutions": {
-    "string-width": "4.2.3"
   }
 }
