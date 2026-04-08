@@ -44,7 +44,7 @@ export function snapQuotePage({
         },
         img: {
           type: "image",
-          props: { url: imageUrl },
+          props: { url: imageUrl, aspect: "16:9" },
         },
         attribution: {
           type: "text",
