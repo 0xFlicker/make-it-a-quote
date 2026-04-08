@@ -17,11 +17,9 @@ function decodeJfsPayload(jfs: string): Record<string, unknown> | null {
 }
 
 // Extract inputs from either raw JSON body or JFS-signed body
-async function extractInputs(
-  req: NextRequest,
-): Promise<Record<string, unknown>> {
-  const text = await req.text();
-
+function extractInputsFromText(
+  text: string,
+): Record<string, unknown> {
   // Try raw JSON first (e.g. local dev / curl)
   try {
     const json = JSON.parse(text);
@@ -51,7 +49,12 @@ export async function GET() {
 // POST: user submitted a cast URL/hash via the input field
 export async function POST(req: NextRequest) {
   try {
-    const inputs = await extractInputs(req);
+    const rawBody = await req.text();
+    console.log("SNAP POST raw body:", rawBody);
+    console.log("SNAP POST content-type:", req.headers.get("content-type"));
+
+    // Re-create request for extractInputs since we consumed the body
+    const inputs = extractInputsFromText(rawBody);
     const castInput = typeof inputs.cast === "string" ? inputs.cast : "";
 
     if (!castInput || castInput.trim().length === 0) {
