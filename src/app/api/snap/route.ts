@@ -53,10 +53,15 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const rawBody = await req.text();
-    console.log("SNAP POST raw body:", rawBody);
-    console.log("SNAP POST content-type:", req.headers.get("content-type"));
 
-    // Re-create request for extractInputs since we consumed the body
+    // Return debug info as the error message so we can see it in the emulator
+    if (!extractInputsFromText(rawBody).cast) {
+      return snapErrorPage(
+        `Debug: body length=${rawBody.length}, starts=${rawBody.substring(0, 80)}, ct=${req.headers.get("content-type")}`,
+        baseUrl,
+      );
+    }
+
     const inputs = extractInputsFromText(rawBody);
     const castInput = typeof inputs.cast === "string" ? inputs.cast : "";
 
