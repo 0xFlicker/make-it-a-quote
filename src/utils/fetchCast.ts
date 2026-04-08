@@ -11,11 +11,12 @@ export async function fetchCast(inputText: string) {
       type = "hash";
     } else {
       const url = new URL(inputText);
-      if (url.hostname !== "farcaster.com") {
+      if (url.hostname === "warpcast.com" || url.hostname === "farcaster.com") {
+        url.hostname = "warpcast.com";
+        identifier = url.toString();
+      } else {
         identifier = url.pathname.split("/").pop()!;
         type = "hash";
-      } else {
-        identifier = inputText;
       }
     }
   }

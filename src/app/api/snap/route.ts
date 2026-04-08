@@ -29,16 +29,20 @@ export async function POST(req: NextRequest) {
     } else {
       try {
         const url = new URL(trimmed);
-        if (url.hostname !== "farcaster.com") {
-          // Try to extract hash from non-warpcast URL
+        if (
+          url.hostname === "warpcast.com" ||
+          url.hostname === "farcaster.com"
+        ) {
+          // Neynar API only accepts warpcast.com URLs
+          url.hostname = "warpcast.com";
+          identifier = url.toString();
+        } else {
           identifier = url.pathname.split("/").pop()!;
           type = "hash";
-        } else {
-          identifier = trimmed;
         }
       } catch {
         return snapErrorPage(
-          "Invalid input. Paste a Warpcast URL or a cast hash starting with 0x.",
+          "Invalid input. Paste a cast URL or hash starting with 0x.",
           baseUrl,
         );
       }
