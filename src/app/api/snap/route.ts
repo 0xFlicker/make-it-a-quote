@@ -3,6 +3,46 @@ import { baseUrl } from "@/config";
 import { fetchCast } from "@/neynar/cast";
 import { snapInputPage, snapQuotePage, snapErrorPage } from "@/utils/snap";
 
+// Decode JFS compact string → payload object
+// JFS format: BASE64URL(header) . BASE64URL(payload) . BASE64URL(signature)
+function decodeJfsPayload(jfs: string): Record<string, unknown> | null {
+  try {
+    const parts = jfs.split(".");
+    if (parts.length !== 3) return null;
+    const payload = Buffer.from(parts[1], "base64url").toString("utf-8");
+    return JSON.parse(payload);
+  } catch {
+    return null;
+  }
+}
+
+// Extract inputs from either raw JSON body or JFS-signed body
+async function extractInputs(
+  req: NextRequest,
+): Promise<Record<string, unknown>> {
+  const text = await req.text();
+
+  // Try raw JSON first (e.g. local dev / curl)
+  try {
+    const json = JSON.parse(text);
+    if (typeof json === "object" && json !== null && json.inputs) {
+      return json.inputs;
+    }
+  } catch {
+    // not JSON
+  }
+
+  // Try JFS (signed payload from Farcaster clients)
+  // Body could be the raw JFS string or a JSON-encoded JFS string
+  const jfsString = text.startsWith('"') ? JSON.parse(text) : text;
+  const payload = decodeJfsPayload(jfsString);
+  if (payload?.inputs && typeof payload.inputs === "object") {
+    return payload.inputs as Record<string, unknown>;
+  }
+
+  return {};
+}
+
 // GET: show the input form snap
 export async function GET() {
   return snapInputPage(baseUrl);
@@ -11,8 +51,8 @@ export async function GET() {
 // POST: user submitted a cast URL/hash via the input field
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const castInput: string | undefined = body?.inputs?.cast;
+    const inputs = await extractInputs(req);
+    const castInput = typeof inputs.cast === "string" ? inputs.cast : "";
 
     if (!castInput || castInput.trim().length === 0) {
       return snapErrorPage("Please enter a cast URL or hash.", baseUrl);
@@ -31,7 +71,8 @@ export async function POST(req: NextRequest) {
         const url = new URL(trimmed);
         if (
           url.hostname === "warpcast.com" ||
-          url.hostname === "farcaster.com"
+          url.hostname === "farcaster.com" ||
+          url.hostname === "farcaster.xyz"
         ) {
           // Neynar API only accepts warpcast.com URLs
           url.hostname = "warpcast.com";
