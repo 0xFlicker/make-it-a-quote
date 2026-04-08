@@ -20,11 +20,14 @@ function decodeJfsPayload(jfs: string): Record<string, unknown> | null {
 function extractInputsFromText(
   text: string,
 ): Record<string, unknown> {
-  // Try raw JSON first (e.g. local dev / curl)
+  // Try raw JSON first (e.g. local dev / curl / Farcaster proxy)
   try {
     const json = JSON.parse(text);
-    if (typeof json === "object" && json !== null && json.inputs) {
-      return json.inputs;
+    if (typeof json === "object" && json !== null) {
+      // Direct: { inputs: {...} }
+      if (json.inputs) return json.inputs;
+      // Farcaster proxy wraps: { payload: { inputs: {...} } }
+      if (json.payload?.inputs) return json.payload.inputs;
     }
   } catch {
     // not JSON
